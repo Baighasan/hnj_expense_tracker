@@ -1,6 +1,9 @@
 import tkinter as tk
 import csv
 
+#######################################################
+#                      Functions                      #
+#######################################################
 
 def categorizeExpenses():
     '''
@@ -43,6 +46,9 @@ def generateGraph():
     '''
     pass
 
+#######################################################
+#               Graphic User Interface                #
+#######################################################
 
 def displayGUI():
     '''
@@ -57,7 +63,3 @@ def displayGUI():
     win.columnconfigure(0, weight=1)
 
     win.mainloop()
-
-
-# Main program
-displayGUI()
