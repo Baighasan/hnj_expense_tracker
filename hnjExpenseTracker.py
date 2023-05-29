@@ -19,30 +19,38 @@ def openFile():
     pass
 
 
-def readFile():
+def readFile(reader):
     '''
         Reads through the csv file of transactions and calls another function to sort it
+        
+        @param reader: csv file reader used to parse through the transactions
     '''
     pass
 
 
-def sortTransaction():
+def sortTransaction(transaction):
     '''
         Reads the transaction and categorizes based on a set of rules
+        
+        @param transaction: the current row in the csv file that we are categorizing
     '''
     pass
 
 
-def generateCSVfile():
+def generateCSVfile(categorizedExpenses):
     '''
         Generates the csv file and appends the data to it
+        
+        @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
     pass
 
 
-def generateGraph():
+def generateGraph(categorizedExpenses):
     '''
         Creates a pie chart that visualizes the distribution of expenses
+        
+        @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
     pass
 
@@ -63,3 +71,7 @@ def displayGUI():
     win.columnconfigure(0, weight=1)
 
     win.mainloop()
+
+
+# Main Program
+displayGUI()
