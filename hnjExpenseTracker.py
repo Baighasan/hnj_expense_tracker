@@ -67,8 +67,22 @@ def displayGUI():
     win.title("HNJ Expense Tracker")
     win.state("zoomed")
 
+    label = tk.Label(win, text = "Welcome to HNJ Expense Tracker!", font = ('Arial', 18))
+    label.pack(padx= 20, pady = 20)
+
+    buttonframe = tk.Frame(win)
+    buttonframe.columnconfigure(0, weight=1)
+    buttonframe.columnconfigure(1, weight=1)
+    buttonframe.columnconfigure(2, weight=1)
+    
+    btn1 = tk.Button(buttonframe, text = "Export Statistics/Pie Graph", font= ('Arial', 18))
+    btn1.grid(row = 0, column = 0 , sticky= tk.W+tk.E)
+
+    btn2 = tk.Button(buttonframe, text = "Load Transcations from CSV File", font= ('Arial', 18))
+    btn2.grid(row = 0, column = 1 , sticky= tk.W+tk.E)
+
+    buttonframe.pack(fill = 'x')
     win.rowconfigure(0, weight=1)
-    win.columnconfigure(0, weight=1)
 
     win.mainloop()
 
