@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 import csv
+import re
 
 #######################################################
 #                      Functions                      #
@@ -15,6 +16,9 @@ def categorizeExpenses():
     
     # Opens the reader for the transactions
     reader = openFile()
+    
+    # Reads the file and calls another function to catagorize each transaction
+    readFile(rules, reader)
 
 
 def loadRules():
@@ -27,17 +31,18 @@ def loadRules():
         return False
     
     rules = {}
-    with open("rules.csv", "r") as file:
-        rulesReader = csv.reader(file)
+    file = open("rules.csv", "r")
+    rulesReader = csv.reader(file)
+    
+    # Row of keywords
+    for row in rulesReader:
+        rules[row[0]] = []
         
-        # Row of keywords
-        for row in rulesReader:
-            rules[row[0]] = []
-            
-            # Parsing through the row of keywords
-            for i in range(1, len(row)):
-                rules[row[0]].append(row[i])
+        # Parsing through the row of keywords
+        for i in range(1, len(row)):
+            rules[row[0]].append(row[i])
 
+    file.close()
     return rules 
 
 
@@ -45,44 +50,36 @@ def openFile():
     '''
         Checks if the file exists and returns it if it does exist
     '''
-    # variable for input validity
-    validInput = False
-    # while loop that loops back if input doesn't meet the requirements
-    while validInput != True:
-        # Ask for file name
-        fileInput = input("Name of file without .csv at the end\n") 
-        # add input to .csv
-        fileName = fileInput + ".csv"
-        # check if the path exists
-        if os.path.exists(fileName):
-            # set validInput to true if it exists and break out of the while loop
-            validInput = True
-            print("File exists")
-        else:
-            # sets it to False and while loop loops back to input
-            validInput = False
-            print("File does not exists")
+    fileInput = input("Name of file without .csv at the end: ")
+    fileName = fileInput + ".csv"
+    if (os.path.exists(fileName) == False):
+        print("Path does not exist")
+        return False
+    
     # opens file and sets reader to a variable that is returned
-    with open(fileName, "r") as file:
-        fileReader = csv.reader(file)
-    return fileReader
+    file =  open(fileName, "r")
+    fileReader = csv.reader(file)
+    return file, fileReader
 
-def readFile(rules, reader):
+
+def readFile(rules, transactionReader):
     '''
         Reads through the csv file of transactions and calls another function to sort it
         
         @param reader: csv file reader used to parse through the transactions
+        @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
     '''
-    pass
+    for transaction in transactionReader[1]:
+        catagorize(rules, transaction)
 
 
-def sortTransaction(transaction):
+def catagorize(rules, transaction):
     '''
         Reads the transaction and categorizes based on a set of rules
         
         @param transaction: the current row in the csv file that we are categorizing
     '''
-    pass
+    print(transaction)
 
 
 def generateCSVfile(categorizedExpenses):
