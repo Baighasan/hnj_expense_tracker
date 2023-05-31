@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 import csv
 
 #######################################################
@@ -9,24 +10,64 @@ def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and catagorizes the expenses
     '''
-    pass
+    # Loads the rules from rules.csv
+    rules = loadRules()
+    
+    # Opens the reader for the transactions
+    reader = openFile()
 
 
 def loadRules():
     '''
         Loads the rules from rules.csv into a dictionary for usage
     '''
-    pass
+    rulesFile = "rules.csv"
+    if (os.path.exists(rulesFile) == False):
+        print("Path does not exist")
+        return False
+    
+    rules = {}
+    with open("rules.csv", "r") as file:
+        rulesReader = csv.reader(file)
+        
+        # Row of keywords
+        for row in rulesReader:
+            rules[row[0]] = []
+            
+            # Parsing through the row of keywords
+            for i in range(1, len(row)):
+                rules[row[0]].append(row[i])
+
+    return rules 
 
 
 def openFile():
     '''
-        Checks if the file exists and returns it if it does
+        Checks if the file exists and returns it if it does exist
     '''
-    pass
+    # variable for input validity
+    validInput = False
+    # while loop that loops back if input doesn't meet the requirements
+    while validInput != True:
+        # Ask for file name
+        fileInput = input("Name of file without .csv at the end\n") 
+        # add input to .csv
+        fileName = fileInput + ".csv"
+        # check if the path exists
+        if os.path.exists(fileName):
+            # set validInput to true if it exists and break out of the while loop
+            validInput = True
+            print("File exists")
+        else:
+            # sets it to False and while loop loops back to input
+            validInput = False
+            print("File does not exists")
+    # opens file and sets reader to a variable that is returned
+    with open(fileName, "r") as file:
+        fileReader = csv.reader(file)
+    return fileReader
 
-
-def readFile(reader):
+def readFile(rules, reader):
     '''
         Reads through the csv file of transactions and calls another function to sort it
         
@@ -66,9 +107,11 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
+
 def displayGUI():
     '''
         Displays the home frame, and switches the frame based on button pressed and if validation is passed
+    '''
     '''
     # GUI
     win = tk.Tk()
@@ -79,7 +122,7 @@ def displayGUI():
     win.columnconfigure(0, weight=1)
 
     win.mainloop()
-
+'''
 
 # Main Program
-displayGUI()
+categorizeExpenses()
