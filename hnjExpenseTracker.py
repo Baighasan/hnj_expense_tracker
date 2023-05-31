@@ -12,6 +12,13 @@ def categorizeExpenses():
     pass
 
 
+def loadRules():
+    '''
+        Loads the rules from rules.csv into a dictionary for usage
+    '''
+    pass
+
+
 def openFile():
     '''
         Checks if the file exists and returns it if it does
@@ -53,6 +60,7 @@ def generateGraph(categorizedExpenses):
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
     pass
+
 
 #######################################################
 #               Graphic User Interface                #
