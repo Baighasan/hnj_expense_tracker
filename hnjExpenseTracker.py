@@ -1,4 +1,5 @@
 import tkinter as tk
+import os.path
 import csv
 
 #######################################################
@@ -9,14 +10,32 @@ def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and catagorizes the expenses
     '''
-    pass
+    # Loads the rules from rules.csv
+    rules = loadRules()
 
 
 def loadRules():
     '''
         Loads the rules from rules.csv into a dictionary for usage
     '''
-    pass
+    rulesFile = "rules.csv"
+    if (os.path.exists(rulesFile) == False):
+        print("Path does not exist")
+        return False
+    
+    rules = {}
+    with open("rules.csv", "r") as file:
+        rulesReader = csv.reader(file)
+        
+        # Row of keywords
+        for row in rulesReader:
+            rules[row[0]] = []
+            
+            # Parsing through the row of keywords
+            for i in range(1, len(row)):
+                rules[row[0]].append(row[i])
+
+    return rules 
 
 
 def openFile():
@@ -66,9 +85,11 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
+
 def displayGUI():
     '''
         Displays the home frame, and switches the frame based on button pressed and if validation is passed
+    '''
     '''
     # GUI
     win = tk.Tk()
@@ -79,7 +100,7 @@ def displayGUI():
     win.columnconfigure(0, weight=1)
 
     win.mainloop()
-
+'''
 
 # Main Program
-displayGUI()
+categorizeExpenses()
