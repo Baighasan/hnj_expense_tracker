@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 import csv
 
 #######################################################
@@ -9,7 +10,8 @@ def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and catagorizes the expenses
     '''
-    pass
+    reader = openFile()
+    
 
 
 def loadRules():
@@ -23,7 +25,20 @@ def openFile():
     '''
         Checks if the file exists and returns it if it does
     '''
-    pass
+    validInput = False
+    while validInput != True:
+        fileInput = input("Name of file\n") 
+        fileName = fileInput + ".csv"
+        if os.path.exists(fileName):
+            validInput = True
+            print("File exists")
+        else:
+            validInput = False
+            print("File does not exists")
+    with open(fileName, "r") as file:
+        fileReader = csv.reader(file)
+    return fileReader
+    
 
 
 def readFile(reader):
@@ -82,4 +97,5 @@ def displayGUI():
 
 
 # Main Program
-displayGUI()
+# displayGUI()
+categorizeExpenses()
