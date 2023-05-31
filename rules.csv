@@ -1,9 +1,9 @@
-Housing,real estate,property manage,home,furniture,apartment,property,landscaping,garden,appliance
+Housing,real estate,property manage,home,furniture,apartment,property,landscaping,garden,appliance,freed developments
 Transportation,train,taxi,parking,car,rideshare,cruise,bike,airline,toll,fuel,bicycle,driving,car wash,ferry,petro,highway
-Food,frills,walmart,longos,loblaws,fast food,foodtruck,cater,restaurant,cafe,bakery,meal,eat,bar,buffet,snack,butcher,seafood,deli,brewery,grocery,supermarket,dine,dining,fast food,food truck,mcdonalds
-Utilities,enbridge,alectra,electricity,gas,water,heating
-Clothing,apparel
-Insurance,premium,policy payment,policy renewal,policy extension
-Medical,pharmacy,lab,dental,optical
+Food,frills,longos,loblaws,fast food,foodtruck,cater,restaurant,cafe,bakery,meal,eat,bar,buffet,snack,butcher,seafood,deli,brewery,grocery,supermarket,dine,dining,fast food,food truck,mcdonalds
+Utilities,enbridge,alectra,electricity,gas,water,heating,hydro one,alectra utilities,elexicon energy,hydro ottawa and toronto hydro
+Clothing,apparel,pants,t-shirt,hat,shoes,scarf,gloves,jacket,hoodie,sweater,roots,nike,louis vuitton,gucci,chanel,adidas,zara,h&h,cartier,uniqlo,dior,rolex,tiffany & co.,coach,puma,burberry,ray-ban,puma,the north face, victoria's secret,levi's
+Insurance,premium,policy payment,policy renewal,policy extension,manulife,sun life financial,desjardins group,canada life,zurich insurance group
+Medical,pharmacy,lab,dental,optical,advil,tylenol,phizer,pfizer,johnson & johnson,roche,merck & co,
 Entertainment,cineplex,netflix,amazon,hulu,spotify,apple,play,game,cinema,nintendo,xbox,playstation,vudu,disney,apple
-Miscellaneous
+Miscellaneous,
