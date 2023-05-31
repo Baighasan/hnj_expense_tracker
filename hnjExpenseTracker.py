@@ -43,18 +43,26 @@ def loadRules():
 
 def openFile():
     '''
-        Checks if the file exists and returns it if it does
+        Checks if the file exists and returns it if it does exist
     '''
+    # variable for input validity
     validInput = False
+    # while loop that loops back if input doesn't meet the requirements
     while validInput != True:
+        # Ask for file name
         fileInput = input("Name of file without .csv at the end\n") 
+        # add input to .csv
         fileName = fileInput + ".csv"
+        # check if the path exists
         if os.path.exists(fileName):
+            # set validInput to true if it exists and break out of the while loop
             validInput = True
             print("File exists")
         else:
+            # sets it to False and while loop loops back to input
             validInput = False
             print("File does not exists")
+    # opens file and sets reader to a variable that is returned
     with open(fileName, "r") as file:
         fileReader = csv.reader(file)
     return fileReader
