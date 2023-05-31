@@ -59,13 +59,12 @@ def openFile():
         fileReader = csv.reader(file)
     return fileReader
 
-def readFile(reader):
+def readFile(rules, reader):
     '''
         Reads through the csv file of transactions and calls another function to sort it
         
         @param reader: csv file reader used to parse through the transactions
     '''
-    
     pass
 
 
