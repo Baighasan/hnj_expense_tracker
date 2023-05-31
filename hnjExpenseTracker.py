@@ -27,7 +27,7 @@ def openFile():
     '''
     validInput = False
     while validInput != True:
-        fileInput = input("Name of file\n") 
+        fileInput = input("Name of file without .csv at the end\n") 
         fileName = fileInput + ".csv"
         if os.path.exists(fileName):
             validInput = True
@@ -38,8 +38,6 @@ def openFile():
     with open(fileName, "r") as file:
         fileReader = csv.reader(file)
     return fileReader
-    
-
 
 def readFile(reader):
     '''
@@ -47,6 +45,7 @@ def readFile(reader):
         
         @param reader: csv file reader used to parse through the transactions
     '''
+    
     pass
 
 
