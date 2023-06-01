@@ -1,4 +1,5 @@
 import tkinter as tk
+import thefuzz.fuzz as fuzz
 import os
 import csv
 import re
