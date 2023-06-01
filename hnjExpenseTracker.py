@@ -10,7 +10,7 @@ import re
 
 def categorizeExpenses():
     '''
-        Calls all the functions that opens the csv file and catagorizes the expenses
+        Calls all the functions that opens the csv file and categorizes the expenses
     '''
     # Loads the rules from rules.csv
     rules = loadRules()
@@ -18,10 +18,10 @@ def categorizeExpenses():
     # Opens the reader for the transactions
     reader = openFile()
     
-    # Reads the file and calls another function to catagorize each transaction
-    catagorizedExpenses =  readFile(rules, reader)
+    # Reads the file and calls another function to categorize each transaction
+    categorizedExpenses =  readFile(rules, reader)
     
-    print(catagorizedExpenses)
+    print(categorizedExpenses)
 
 
 def loadRules():
@@ -72,7 +72,7 @@ def readFile(rules, transactionReader):
         @param reader: csv file reader used to parse through the transactions
         @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
     '''
-    # Creates a dictionary for catagories
+    # Creates a dictionary for categories
     expenseCategories = {
                     "Housing": 0,
                     "Transportation": 0,
@@ -86,12 +86,12 @@ def readFile(rules, transactionReader):
                 }
     
     for transaction in transactionReader[1]:
-        expenseCategories = catagorize(rules, transaction, expenseCategories)
+        expenseCategories = categorize(rules, transaction, expenseCategories)
     
     return expenseCategories
 
 
-def catagorize(rules, transaction, expenseCategories):
+def categorize(rules, transaction, expenseCategories):
     '''
         Reads the transaction and categorizes based on a set of rules
         
@@ -104,12 +104,12 @@ def catagorize(rules, transaction, expenseCategories):
     transactionAmount = float(transaction[2])
     
     # ?Maybe break into individual functions to help fix the issues?
-    # Parsing through individual catagories
+    # Parsing through individual categories
     for category in rules:
         # Parsing through descriptors in the rules.csv
         for  descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
-                # Parsing through different expense catagories to match it to one and increase the money
+                # Parsing through different expense categories to match it to one and increase the money
                 for i in expenseCategories:
                     # Finds the category to increase the amount
                     if category == i:
@@ -117,6 +117,7 @@ def catagorize(rules, transaction, expenseCategories):
                         break
                     else:
                         expenseCategories["Miscellaneous"] += transactionAmount
+                        break
                 break
     
     return expenseCategories
