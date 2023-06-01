@@ -104,7 +104,7 @@ def catagorize(rules, transaction):
     # Parsing through individual catagories
     for catagory in rules:
         # Parsing through descriptors in the rules.csv
-        # !Needs to break out of the for loop after it finds a match within rules
+        # !Needs to break out of the for loop after it finds a match within rules (maybe with a while loop? Might have to rethink some parts of this logic)
         for descriptor in rules[catagory]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through 
