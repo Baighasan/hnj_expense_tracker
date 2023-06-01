@@ -117,6 +117,7 @@ def categorize(rules, transaction, expenseCategories):
                         break
                     else:
                         expenseCategories["Miscellaneous"] += transactionAmount
+                        break
                 break
     
     return expenseCategories
