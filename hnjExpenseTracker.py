@@ -18,7 +18,9 @@ def categorizeExpenses():
     reader = openFile()
     
     # Reads the file and calls another function to catagorize each transaction
-    readFile(rules, reader)
+    catagorizedExpenses =  readFile(rules, reader)
+    
+    print(catagorizedExpenses)
 
 
 def loadRules():
@@ -79,7 +81,40 @@ def catagorize(rules, transaction):
         
         @param transaction: the current row in the csv file that we are categorizing
     '''
-    print(transaction)
+    # Creates a dictionary for catagories
+    expenseCatagories = {
+                    "Housing": 0,
+                    "Transportation": 0,
+                    "Food": 0,
+                    "Utilities": 0,
+                    "Clothing": 0,
+                    "Insurance": 0,
+                    "Medical": 0,
+                    "Entertainment": 0,
+                    "Miscellaneous": 0
+                }
+    
+    # Made lowercase so that we can map to rules.csv
+    transactionDescriptor = transaction[1].lower()
+    # Stores the transaction amount
+    transactionAmount = float(transaction[2])
+    
+    # ?Maybe break into individual functions to help fix the issues?
+    # TODO Add functionality so that it adds the transaction to miscellaneous if not able to map
+    # Parsing through individual catagories
+    for catagory in rules:
+        # Parsing through descriptors in the rules.csv
+        # !Needs to break out of the for loop after it finds a match within rules
+        for descriptor in rules[catagory]:
+            if re.search(descriptor, transactionDescriptor):
+                # Parsing through 
+                for i in expenseCatagories:
+                    # Finds the catagory to increase the amount
+                    if catagory == i:
+                        expenseCatagories[i] += transactionAmount
+                        break
+    
+    return expenseCatagories
 
 
 def generateCSVfile(categorizedExpenses):
