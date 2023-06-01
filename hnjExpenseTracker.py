@@ -1,5 +1,5 @@
 import tkinter as tk
-import thefuzz.fuzz as fuzz
+import thefuzz as fuzz
 import os
 import csv
 import re
@@ -73,7 +73,7 @@ def readFile(rules, transactionReader):
         @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
     '''
     # Creates a dictionary for catagories
-    expenseCatagories = {
+    expenseCategories = {
                     "Housing": 0,
                     "Transportation": 0,
                     "Food": 0,
@@ -86,12 +86,12 @@ def readFile(rules, transactionReader):
                 }
     
     for transaction in transactionReader[1]:
-        expenseCatagories = catagorize(rules, transaction, expenseCatagories)
+        expenseCategories = catagorize(rules, transaction, expenseCategories)
     
-    return expenseCatagories
+    return expenseCategories
 
 
-def catagorize(rules, transaction, expenseCatagories):
+def catagorize(rules, transaction, expenseCategories):
     '''
         Reads the transaction and categorizes based on a set of rules
         
@@ -104,22 +104,22 @@ def catagorize(rules, transaction, expenseCatagories):
     transactionAmount = float(transaction[2])
     
     # ?Maybe break into individual functions to help fix the issues?
-    # TODO Add functionality so that it adds the transaction to miscellaneous if not able to map
     # Parsing through individual catagories
     for category in rules:
         # Parsing through descriptors in the rules.csv
-        # !Needs to break out of the for loop after it finds a match within rules (maybe with a while loop? Might have to rethink some parts of this logic)
         for  descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through different expense catagories to match it to one and increase the money
-                for i in expenseCatagories:
+                for i in expenseCategories:
                     # Finds the category to increase the amount
                     if category == i:
-                        expenseCatagories[i] += transactionAmount
+                        expenseCategories[i] += transactionAmount
                         break
+                    else:
+                        expenseCategories["Miscellaneous"] += transactionAmount
                 break
     
-    return expenseCatagories
+    return expenseCategories
 
 
 def generateCSVfile(categorizedExpenses):
