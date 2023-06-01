@@ -103,6 +103,8 @@ def categorize(rules, transaction, expenseCategories):
     # Stores the transaction amount
     transactionAmount = float(transaction[2])
     
+    match_found = False
+    
     # ?Maybe break into individual functions to help fix the issues?
     # Parsing through individual categories
     for category in rules:
@@ -114,10 +116,13 @@ def categorize(rules, transaction, expenseCategories):
                     # Finds the category to increase the amount
                     if category == i:
                         expenseCategories[i] += transactionAmount
+                        match_found = True
                         break
-                    else:
-                        expenseCategories["Miscellaneous"] += transactionAmount
-                        break
+                
+                if match_found == False:
+                    expenseCategories["Miscellaneous"] += transactionAmount
+                    match_found = False
+                    
                 break
     
     return expenseCategories
