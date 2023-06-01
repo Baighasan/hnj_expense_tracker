@@ -106,15 +106,15 @@ def catagorize(rules, transaction, expenseCatagories):
     # ?Maybe break into individual functions to help fix the issues?
     # TODO Add functionality so that it adds the transaction to miscellaneous if not able to map
     # Parsing through individual catagories
-    for catagory in rules:
+    for category in rules:
         # Parsing through descriptors in the rules.csv
         # !Needs to break out of the for loop after it finds a match within rules (maybe with a while loop? Might have to rethink some parts of this logic)
-        for descriptor in rules[catagory]:
+        for  descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through different expense catagories to match it to one and increase the money
                 for i in expenseCatagories:
-                    # Finds the catagory to increase the amount
-                    if catagory == i:
+                    # Finds the category to increase the amount
+                    if category == i:
                         expenseCatagories[i] += transactionAmount
                         break
                 break
