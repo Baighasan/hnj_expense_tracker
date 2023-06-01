@@ -72,16 +72,6 @@ def readFile(rules, transactionReader):
         @param reader: csv file reader used to parse through the transactions
         @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
     '''
-    for transaction in transactionReader[1]:
-        catagorize(rules, transaction)
-
-
-def catagorize(rules, transaction):
-    '''
-        Reads the transaction and categorizes based on a set of rules
-        
-        @param transaction: the current row in the csv file that we are categorizing
-    '''
     # Creates a dictionary for catagories
     expenseCatagories = {
                     "Housing": 0,
@@ -94,6 +84,19 @@ def catagorize(rules, transaction):
                     "Entertainment": 0,
                     "Miscellaneous": 0
                 }
+    
+    for transaction in transactionReader[1]:
+        expenseCatagories = catagorize(rules, transaction, expenseCatagories)
+    
+    return expenseCatagories
+
+
+def catagorize(rules, transaction, expenseCatagories):
+    '''
+        Reads the transaction and categorizes based on a set of rules
+        
+        @param transaction: the current row in the csv file that we are categorizing
+    '''
     
     # Made lowercase so that we can map to rules.csv
     transactionDescriptor = transaction[1].lower()
@@ -108,12 +111,13 @@ def catagorize(rules, transaction):
         # !Needs to break out of the for loop after it finds a match within rules (maybe with a while loop? Might have to rethink some parts of this logic)
         for descriptor in rules[catagory]:
             if re.search(descriptor, transactionDescriptor):
-                # Parsing through 
+                # Parsing through different expense catagories to match it to one and increase the money
                 for i in expenseCatagories:
                     # Finds the catagory to increase the amount
                     if catagory == i:
                         expenseCatagories[i] += transactionAmount
                         break
+                break
     
     return expenseCatagories
 
