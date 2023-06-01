@@ -108,7 +108,6 @@ def catagorize(rules, transaction, expenseCatagories):
     # Parsing through individual catagories
     for category in rules:
         # Parsing through descriptors in the rules.csv
-        # !Needs to break out of the for loop after it finds a match within rules (maybe with a while loop? Might have to rethink some parts of this logic)
         for  descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through different expense catagories to match it to one and increase the money
