@@ -105,16 +105,34 @@ def generateGraph(categorizedExpenses):
 #######################################################
 
 
-def displayGUI():
-    '''
-        Displays the home frame, and switches the frame based on button pressed and if validation is passed
-    '''
-    # GUI
+import tkinter as tk
+
+def create_home_screen():
+    def show_statistics_screen():
+        clear_window()
+        label = tk.Label(win, text="Statistics Screen", font=('Arial', 18))
+        label.pack(padx=20, pady=20)        # One screen showing all statistics
+
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
+        back_btn.pack(pady=20)              # Button returns user back to main menu
+
+    def show_load_screen():
+        clear_window()
+        label = tk.Label(win, text="Loaded successfully!", font=('Arial', 18))
+        label.pack(padx=20, pady=20)        # Second Screen showing loaded successfully screen
+
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
+        back_btn.pack(pady=20)
+
+    def clear_window():
+        for widget in win.winfo_children():
+            widget.destroy()                # Clears the main screen
+
     win = tk.Tk()
     win.title("Home Screen")
     win.state("zoomed")
 
-    label = tk.Label(win, text="Welcome to the Home Screen!", font=('Arial', 18))
+    label = tk.Label(win, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
     label.pack(padx=20, pady=20)
 
     file_label = tk.Label(win, text="Enter transaction file name", font=('Arial', 14))
@@ -130,7 +148,7 @@ def displayGUI():
     btn1 = tk.Button(buttonframe, text="Statistics", font=('Arial', 18), command=show_statistics_screen)
     btn1.grid(row=0, column=0, sticky=tk.W + tk.E)
 
-    btn2 = tk.Button(buttonframe, text="Load", font=('Arial', 18), command=show_load_screen)
+    btn2 = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 18), command=show_load_screen)
     btn2.grid(row=0, column=1, sticky=tk.W + tk.E)
 
     buttonframe.pack(fill='x')
@@ -138,6 +156,5 @@ def displayGUI():
 
     win.mainloop()
 
-
 # Main Program
-displayGUI()
+create_home_screen()
