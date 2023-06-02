@@ -1,10 +1,10 @@
-Housing,real estate,property manage,home,furniture,apartment,property,landscaping,garden,appliance
+Housing,real estate,property manage,home,furniture,apartment,property,landscaping,garden,appliance,rent,landscaping,property,renovation,cleaning
 Transportation,train,taxi,parking,car,rideshare,cruise,bike,airline,toll,fuel,bicycle,driving,car wash,ferry,petro,highway,air can
-Food,frills,longos,loblaws,whole foods,tim hortons,starbucks,fast food,foodtruck,cater,restaurant,cafe,bakery,meal,eat,bar,buffet,snack,butcher,seafood,deli,brewery,grocery,supermarket,dine,fast food,food truck,mcdonalds,kabob, bbq, barbq
-Utilities,enbridge,alectra,electricity,gas,water,heating,internet,wifi,bell,rogers
-Clothing,apparel
-Insurance,premium,policy payment,policy renewal,policy extension
+Food,frills,longos,loblaws,whole foods,tim hortons,starbucks,fast food,foodtruck,cater,restaurant,cafe,bakery,meal,eat,bar,buffet,snack,butcher,seafood,deli,brewery,grocery,supermarket,dine,fast food,food truck,mcdonalds,kabob,bbq,barbq,uber,skipthedishes,doordash
+Utilities,enbridge,alectra,electricity,gas,water,heating,internet,wifi,bell,rogers,trash,sewerage,power,cable,recycling,garbage
+Clothing,apparel,pants,shirts,socks,clothing,fashion,nike,old navy,gap,lvmh,puma,zara,h&m,winners,shoe company,uniqlo,hollister,american eagle,
+Insurance,premium payment,policy payment,policy renewal,policy extension,policy cancellation,policy endorsement,policy processing
 Investements
-Medical,pharmacy,lab,dental,optical
-Entertainment,cineplex,netflix,hulu,spotify,apple,play,game,cinema,nintendo,xbox,playstation,vudu,disney,apple,music
+Medical,pharmacy,lab,dental,optical,hospital,therapy,prescription,medicine,docter,physician,treatment,surgery,ambulance,emergency,mental health,vision,optometry,chiropractic,wellness,pathology,psychiatrist,psychologist,rexall,radiology
+Entertainment,cineplex,netflix,hulu,spotify,apple,play,game,cinema,nintendo,xbox,playstation,vudu,disney,apple,music,zoo,aquarium,museum,movie,arcade
 Miscellaneous
