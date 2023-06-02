@@ -82,10 +82,16 @@ def readFile(rules, transactionReader):
                     "Insurance": 0,
                     "Medical": 0,
                     "Entertainment": 0,
-                    "Miscellaneous": 0
+                    "Miscellaneous": 0,
+                    "gains": 0
                 }
     
     for transaction in transactionReader[1]:
+        # If index 2 of the transaction is blank, and the dollar amount is in index 3, that means that money was gained, then the loop is rerun and a new transaction is analyzed
+        if transaction[2] == "":
+            expenseCategories = calculateGains(transaction, expenseCategories)
+            continue
+            
         expenseCategories = categorize(rules, transaction, expenseCategories)
     
     return expenseCategories
@@ -93,9 +99,12 @@ def readFile(rules, transactionReader):
 
 def categorize(rules, transaction, expenseCategories):
     '''
-        Reads the transaction and categorizes based on a set of rules
+        Reads through the transaction csv file and uses a catagorizing algorithm that takes one transaction, and attempts to match a keyword substring to the transaction
+        descriptor substring
         
+        @param rules: a dictionary that holds the rules/mapping keywords that was loaded from rules.csv
         @param transaction: the current row in the csv file that we are categorizing
+        @param expenseCategories: a dictionary with the key being the categories, and the value being the amount spent in that expense category
     '''
     
     # Made lowercase so that we can map to rules.csv
@@ -103,7 +112,7 @@ def categorize(rules, transaction, expenseCategories):
     # Stores the transaction amount
     transactionAmount = float(transaction[2])
     
-    # ?Maybe break into individual functions to help fix the issues?
+    # ?Maybe break into individual functions
     # Parsing through individual categories
     for category in rules:
         # Parsing through descriptors in the rules.csv
@@ -116,8 +125,20 @@ def categorize(rules, transaction, expenseCategories):
                         expenseCategories[i] += transactionAmount
                         return expenseCategories
                 
-        
+    # If the matching algorithm
     expenseCategories["Miscellaneous"] += transactionAmount
+    return expenseCategories
+
+
+def calculateGains(transaction, expenseCategories):
+    '''
+        Adds the value in the third index of the transaction to the gains key in the expenseCatagories dictionary
+        
+        @param transaction: the current transaction we are adding to the dictionary
+        @param expenseCategories: 
+    '''
+    gain = float(transaction[3])
+    expenseCategories["gains"] += gain
     return expenseCategories
 
 
