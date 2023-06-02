@@ -1,5 +1,7 @@
 import tkinter as tk
+import os
 import csv
+import re
 
 #######################################################
 #                      Functions                      #
@@ -9,32 +11,75 @@ def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and catagorizes the expenses
     '''
-    pass
+    # Loads the rules from rules.csv
+    rules = loadRules()
+    
+    # Opens the reader for the transactions
+    reader = openFile()
+    
+    # Reads the file and calls another function to catagorize each transaction
+    readFile(rules, reader)
+
+
+def loadRules():
+    '''
+        Loads the rules from rules.csv into a dictionary for usage
+    '''
+    rulesFile = "rules.csv"
+    if (os.path.exists(rulesFile) == False):
+        print("Path does not exist")
+        return False
+    
+    rules = {}
+    file = open("rules.csv", "r")
+    rulesReader = csv.reader(file)
+    
+    # Row of keywords
+    for row in rulesReader:
+        rules[row[0]] = []
+        
+        # Parsing through the row of keywords
+        for i in range(1, len(row)):
+            rules[row[0]].append(row[i])
+
+    file.close()
+    return rules 
 
 
 def openFile():
     '''
-        Checks if the file exists and returns it if it does
+        Checks if the file exists and returns it if it does exist
     '''
-    pass
+    fileInput = input("Name of file without .csv at the end: ")
+    fileName = fileInput + ".csv"
+    if (os.path.exists(fileName) == False):
+        print("Path does not exist")
+        return False
+    
+    # opens file and sets reader to a variable that is returned
+    file =  open(fileName, "r")
+    fileReader = csv.reader(file)
+    return file, fileReader
 
 
-def readFile(reader):
+def readFile(rules, transactionReader):
     '''
         Reads through the csv file of transactions and calls another function to sort it
         
         @param reader: csv file reader used to parse through the transactions
+        @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
     '''
-    pass
+    for transaction in transactionReader[1]:
+        catagorize(rules, transaction)
 
 
-def sortTransaction(transaction):
+def catagorize(rules, transaction):
     '''
         Reads the transaction and categorizes based on a set of rules
         
         @param transaction: the current row in the csv file that we are categorizing
     '''
-    pass
+    print(transaction)
 
 
 def generateCSVfile(categorizedExpenses):
@@ -54,35 +99,17 @@ def generateGraph(categorizedExpenses):
     '''
     pass
 
+
 #######################################################
 #               Graphic User Interface                #
 #######################################################
 
-import tkinter as tk
 
-import tkinter as tk
-
-def create_home_screen():
-    def show_statistics_screen():
-        clear_window()
-        label = tk.Label(win, text="Statistics Screen", font=('Arial', 18))
-        label.pack(padx=20, pady=20)
-
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
-        back_btn.pack(pady=20)
-
-    def show_load_screen():
-        clear_window()
-        label = tk.Label(win, text="Loaded successfully!", font=('Arial', 18))
-        label.pack(padx=20, pady=20)
-
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
-        back_btn.pack(pady=20)
-
-    def clear_window():
-        for widget in win.winfo_children():
-            widget.destroy()
-
+def displayGUI():
+    '''
+        Displays the home frame, and switches the frame based on button pressed and if validation is passed
+    '''
+    # GUI
     win = tk.Tk()
     win.title("Home Screen")
     win.state("zoomed")
@@ -111,6 +138,6 @@ def create_home_screen():
 
     win.mainloop()
 
+
 # Main Program
-if __name__ == '__main__':
-    create_home_screen()
+displayGUI()
