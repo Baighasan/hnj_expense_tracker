@@ -104,30 +104,28 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-def create_home_screen():
+def create_home_screen(win):
     def show_statistics_screen():
         clear_window()
         label = tk.Label(win, text="Statistics Screen", font=('Arial', 18))
-        label.pack(padx=20, pady=20)        # One screen showing all statistics
+        label.pack(padx=20, pady=20)
 
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
-        back_btn.pack(pady=20)              # Button returns user back to main menu
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=lambda: create_home_screen(win))
+        back_btn.pack(pady=20)
 
     def show_load_screen():
         clear_window()
         label = tk.Label(win, text="Loaded successfully!", font=('Arial', 18))
-        label.pack(padx=20, pady=20)        # Second Screen showing loaded successfully screen
+        label.pack(padx=20, pady=20)
 
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=lambda: create_home_screen(win))
         back_btn.pack(pady=20)
 
     def clear_window():
         for widget in win.winfo_children():
-            widget.destroy()                # Clears the main screen
+            widget.destroy()
 
-    win = tk.Tk()
-    win.title("Home Screen")
-    win.state("zoomed")
+    clear_window()
 
     label = tk.Label(win, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
     label.pack(padx=20, pady=20)
@@ -151,7 +149,8 @@ def create_home_screen():
     buttonframe.pack(fill='x')
     win.rowconfigure(0, weight=1)
 
-    win.mainloop()
-
-# Main Program
-create_home_screen()
+win = tk.Tk()
+win.title("Home Screen")
+win.state("zoomed")
+create_home_screen(win)
+win.mainloop()
