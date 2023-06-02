@@ -49,11 +49,10 @@ def loadRules():
     return rules 
 
 
-def openFile():
+def openFile(fileInput):
     '''
         Checks if the file exists and returns it if it does exist
     '''
-    fileInput = input("Name of file without .csv at the end: ")
     fileName = fileInput + ".csv"
     if (os.path.exists(fileName) == False):
         print("Path does not exist")
@@ -165,53 +164,65 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-def create_home_screen(win):
-    def show_statistics_screen():
-        clear_window()
-        label = tk.Label(win, text="Statistics Screen", font=('Arial', 18))
+def validate_file():
+    fileName = entry.get()
+    if openFile(fileName):
+        show_load_screen()
+    else:
+        label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18))
         label.pack(padx=20, pady=20)
+        home_frame.after(1000, label.pack_forget)
 
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=lambda: create_home_screen(win))
-        back_btn.pack(pady=20)
+def show_statistics_screen():
+    home_frame.pack_forget()
+    statistics_frame.pack()
 
-    def show_load_screen():
-        clear_window()
-        label = tk.Label(win, text="Loaded successfully!", font=('Arial', 18))
-        label.pack(padx=20, pady=20)
+def show_load_screen():
+    home_frame.pack_forget()
+    load_frame.pack()
 
-        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=lambda: create_home_screen(win))
-        back_btn.pack(pady=20)
-
-    def clear_window():
-        for widget in win.winfo_children():
-            widget.destroy()
-
-    clear_window()
-
-    label = tk.Label(win, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
-    label.pack(padx=20, pady=20)
-
-    file_label = tk.Label(win, text="Enter transaction file name", font=('Arial', 14))
-    file_label.pack()
-
-    entry = tk.Entry(win, font=('Arial', 12))
-    entry.pack()
-
-    buttonframe = tk.Frame(win)
-    buttonframe.columnconfigure(0, weight=1)
-    buttonframe.columnconfigure(1, weight=1)
-
-    btn1 = tk.Button(buttonframe, text="Statistics", font=('Arial', 18), command=show_statistics_screen)
-    btn1.grid(row=0, column=0, sticky=tk.W + tk.E)
-
-    btn2 = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 18), command=show_load_screen)
-    btn2.grid(row=0, column=1, sticky=tk.W + tk.E)
-
-    buttonframe.pack(fill='x')
-    win.rowconfigure(0, weight=1)
+def back_to_home_screen():
+    statistics_frame.pack_forget()
+    load_frame.pack_forget()
+    home_frame.pack()
 
 win = tk.Tk()
-win.title("Home Screen")
-win.state("zoomed")
-create_home_screen(win)
+win.title("HNJ Expense Tracker")
+
+home_frame = tk.Frame(win)
+home_frame.pack(fill='both', expand=True)
+
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
+label.pack(padx=20, pady=20)
+
+file_label = tk.Label(home_frame, text="Enter transaction file name", font=('Arial', 18))
+file_label.pack(padx=20, pady=(0, 10))
+
+entry = tk.Entry(home_frame, font=('Arial', 16))
+entry.pack(padx=20, pady=(0, 10))
+
+buttonframe = tk.Frame(home_frame)
+buttonframe.pack(pady=(10, 0))
+
+btn2 = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=validate_file)
+btn2.pack(fill='x')
+
+statistics_frame = tk.Frame(win)
+label = tk.Label(statistics_frame, text="Statistics Screen", font=('Arial', 18))
+label.pack(padx=20, pady=20)
+
+back_btn = tk.Button(statistics_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
+back_btn.pack(pady=20)
+
+load_frame = tk.Frame(win)
+label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18))
+label.pack(padx=20, pady=20)
+
+back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
+back_btn.pack(pady=20)
+
+# Configure weights to make the frames expand with the window
+win.rowconfigure(0, weight=1)
+win.columnconfigure(0, weight=1)
+
 win.mainloop()
