@@ -104,9 +104,6 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-
-import tkinter as tk
-
 def create_home_screen():
     def show_statistics_screen():
         clear_window()
