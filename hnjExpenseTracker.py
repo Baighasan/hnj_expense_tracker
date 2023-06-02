@@ -58,34 +58,59 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-def displayGUI():
-    '''
-        Displays the home frame, and switches the frame based on button pressed and if validation is passed
-    '''
-    # GUI
+import tkinter as tk
+
+import tkinter as tk
+
+def create_home_screen():
+    def show_statistics_screen():
+        clear_window()
+        label = tk.Label(win, text="Statistics Screen", font=('Arial', 18))
+        label.pack(padx=20, pady=20)
+
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
+        back_btn.pack(pady=20)
+
+    def show_load_screen():
+        clear_window()
+        label = tk.Label(win, text="Loaded successfully!", font=('Arial', 18))
+        label.pack(padx=20, pady=20)
+
+        back_btn = tk.Button(win, text="Back", font=('Arial', 18), command=create_home_screen)
+        back_btn.pack(pady=20)
+
+    def clear_window():
+        for widget in win.winfo_children():
+            widget.destroy()
+
     win = tk.Tk()
-    win.title("HNJ Expense Tracker")
+    win.title("Home Screen")
     win.state("zoomed")
 
-    label = tk.Label(win, text = "Welcome to HNJ Expense Tracker!", font = ('Arial', 18))
-    label.pack(padx= 20, pady = 20)
+    label = tk.Label(win, text="Welcome to the Home Screen!", font=('Arial', 18))
+    label.pack(padx=20, pady=20)
+
+    file_label = tk.Label(win, text="Enter transaction file name", font=('Arial', 14))
+    file_label.pack()
+
+    entry = tk.Entry(win, font=('Arial', 12))
+    entry.pack()
 
     buttonframe = tk.Frame(win)
     buttonframe.columnconfigure(0, weight=1)
     buttonframe.columnconfigure(1, weight=1)
-    buttonframe.columnconfigure(2, weight=1)
-    
-    btn1 = tk.Button(buttonframe, text = "Export Statistics/Pie Graph", font= ('Arial', 18))
-    btn1.grid(row = 0, column = 0 , sticky= tk.W+tk.E)
 
-    btn2 = tk.Button(buttonframe, text = "Load Transcations from CSV File", font= ('Arial', 18))
-    btn2.grid(row = 0, column = 1 , sticky= tk.W+tk.E)
+    btn1 = tk.Button(buttonframe, text="Statistics", font=('Arial', 18), command=show_statistics_screen)
+    btn1.grid(row=0, column=0, sticky=tk.W + tk.E)
 
-    buttonframe.pack(fill = 'x')
+    btn2 = tk.Button(buttonframe, text="Load", font=('Arial', 18), command=show_load_screen)
+    btn2.grid(row=0, column=1, sticky=tk.W + tk.E)
+
+    buttonframe.pack(fill='x')
     win.rowconfigure(0, weight=1)
 
     win.mainloop()
 
-
 # Main Program
-displayGUI()
+if __name__ == '__main__':
+    create_home_screen()
