@@ -80,7 +80,6 @@ def readFile(rules, transactionReader):
                     "Utilities": 0,
                     "Clothing": 0,
                     "Insurance": 0,
-                    "Investements": 0,
                     "Medical": 0,
                     "Entertainment": 0,
                     "Miscellaneous": 0,
@@ -113,21 +112,22 @@ def categorize(rules, transaction, expenseCategories):
     # Stores the transaction amount
     transactionAmount = float(transaction[2])
     
-    # ?Maybe break into individual functions
     # Parsing through the keys of the dictionary with the category expense amounts
     for category in rules:
         # Parsing through the keywords in the current category above
-        for  descriptor in rules[category]:
+        for descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through different expense categories to match it to one and increase the money
                 for i in expenseCategories:
                     # Finds the category to increase the amount
                     if category == i:
                         expenseCategories[i] += transactionAmount
+                        print(transactionDescriptor + ":" + category)       # !For debugging
                         return expenseCategories
                 
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
+    print(transactionDescriptor + ":" + "Miscellaneous")        # !For debugging
     return expenseCategories
 
 
