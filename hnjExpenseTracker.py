@@ -48,20 +48,29 @@ def loadRules():
     file.close()
     return rules 
 
+def validateFile(fileInput):
+    fileName = str(fileInput) + ".csv"
+    if (os.path.exists(fileName) == False):
+        label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18), fg="red")
+        label.pack(padx=20, pady=20)
+        home_frame.after(1250, label.pack_forget)
+        return False
+    show_load_screen() 
+    return fileName
 
-def openFile(fileInput):
+def openFile(fileName):
     '''
         Checks if the file exists and returns it if it does exist
     '''
-    fileName = fileInput + ".csv"
-    if (os.path.exists(fileName) == False):
-        print("Path does not exist")
-        return False
+    fileName = validateFile(fileName)  # Get the filename from validateFile
+    if fileName:
+        with open(fileName, "r") as file:
+            csv_reader = csv.reader(file)
+            contents = "\n".join([",".join(row) for row in csv_reader])
+            text_widget = tk.Text(load_frame, font=('Arial', 18))
+            text_widget.insert(tk.END, contents)
+            text_widget.pack(padx=20, pady=10)
     
-    # opens file and sets reader to a variable that is returned
-    file =  open(fileName, "r")
-    fileReader = csv.reader(file)
-    return file, fileReader
 
 
 def readFile(rules, transactionReader):
@@ -164,30 +173,26 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-def validate_file():
-    fileName = entry.get()
-    if openFile(fileName):
-        show_load_screen()
-    else:
-        label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18))
-        label.pack(padx=20, pady=20)
-        home_frame.after(1000, label.pack_forget)
-
-def show_statistics_screen():
-    home_frame.pack_forget()
-    statistics_frame.pack()
+def set_fullscreen():
+    win.attributes('-fullscreen', True)
 
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
+    
 
 def back_to_home_screen():
-    statistics_frame.pack_forget()
     load_frame.pack_forget()
     home_frame.pack()
 
+def displayButtonClicked():
+    fileName = validateFile(fileNameEntry.get())
+    openFile(fileName)
+
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
+
+set_fullscreen()
 
 home_frame = tk.Frame(win)
 home_frame.pack(fill='both', expand=True)
@@ -198,25 +203,21 @@ label.pack(padx=20, pady=20)
 file_label = tk.Label(home_frame, text="Enter transaction file name", font=('Arial', 18))
 file_label.pack(padx=20, pady=(0, 10))
 
-entry = tk.Entry(home_frame, font=('Arial', 16))
-entry.pack(padx=20, pady=(0, 10))
+fileNameEntry = tk.Entry(home_frame, font=('Arial', 16))
+fileNameEntry.pack(padx=20, pady=(0, 10))
 
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-btn2 = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=validate_file)
-btn2.pack(fill='x')
-
-statistics_frame = tk.Frame(win)
-label = tk.Label(statistics_frame, text="Statistics Screen", font=('Arial', 18))
-label.pack(padx=20, pady=20)
-
-back_btn = tk.Button(statistics_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
-back_btn.pack(pady=20)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=lambda: validateFile(fileNameEntry.get()))
+loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
 label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18))
 label.pack(padx=20, pady=20)
+
+displayButton = tk.Button(load_frame, text="Display contents", font=('Arial', 24), command=displayButtonClicked)
+displayButton.pack(fill='x')
 
 back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
 back_btn.pack(pady=20)
