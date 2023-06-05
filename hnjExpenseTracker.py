@@ -1,8 +1,10 @@
 import tkinter as tk
-import thefuzz as fuzz
+#import thefuzz as fuzz
 import os
 import csv
 import re
+import matplotlib 
+import numpy as np
 
 #######################################################
 #                      Functions                      #
@@ -152,12 +154,30 @@ def generateCSVfile(categorizedExpenses):
     pass
 
 
-def generateGraph(categorizedExpenses):
+def generateGraph(expenseCategories):
     '''
         Creates a pie chart that visualizes the distribution of expenses
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
+
+    totalSpending = sum(expenseCategories.values())
+
+    # Calculate percentage for each category
+    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items()}
+
+    # Create lists for labels and values
+    categories = list(percentages.keys())
+    values = list(percentages.values())
+
+    # Create a pie chart
+    plt.pie(values, labels=categories, autopct='%1.1f%%')
+    plt.title('Expense Distribution')
+
+    # Display the chart
+    plt.show()
+
+
     pass
 
 
@@ -183,4 +203,5 @@ def displayGUI():
 '''
 
 # Main Program
-categorizeExpenses()
+categorizedExpenses = categorizeExpenses()
+generateGraph(categorizedExpenses)
