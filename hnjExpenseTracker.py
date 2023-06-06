@@ -1,14 +1,14 @@
 import tkinter as tk
-#import thefuzz as fuzz
+# import thefuzz as fuzz
 import os
 import csv
 import re
-import matplotlib 
+import matplotlib.pyplot as plt
 import numpy as np
 
-#######################################################
-#                      Functions                      #
-#######################################################
+# #######################################################
+# #                      Functions                      #
+# #######################################################
 
 def categorizeExpenses():
     '''
@@ -24,6 +24,7 @@ def categorizeExpenses():
     categorizedExpenses = readFile(rules, reader)
     
     print(categorizedExpenses)
+    return categorizedExpenses
 
 
 def loadRules():
@@ -164,8 +165,9 @@ def generateGraph(expenseCategories):
     totalSpending = sum(expenseCategories.values())
 
     # Calculate percentage for each category
-    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items()}
+    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items() if amount != 0}
 
+    
     # Create lists for labels and values
     categories = list(percentages.keys())
     values = list(percentages.values())
@@ -176,9 +178,6 @@ def generateGraph(expenseCategories):
 
     # Display the chart
     plt.show()
-
-
-    pass
 
 
 #######################################################
