@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 import thefuzz as fuzz
 import os
 import csv
@@ -21,7 +22,7 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
-    print(categorizedExpenses)
+    return categorizedExpenses
 
 
 def loadRules():
@@ -53,24 +54,25 @@ def validateFile(fileInput):
     if (os.path.exists(fileName) == False):
         label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18), fg="red")
         label.pack(padx=20, pady=20)
-        home_frame.after(1250, label.pack_forget)
+        home_frame.after(750, label.pack_forget)
         return False
     show_load_screen() 
     return fileName
 
-def openFile(fileName):
+def openFile():
     '''
-        Checks if the file exists and returns it if it does exist
+        Uses dialog box to get the file
     '''
-    fileName = validateFile(fileName)  # Get the filename from validateFile
-    if fileName:
-        with open(fileName, "r") as file:
-            csv_reader = csv.reader(file)
-            contents = "\n".join([",".join(row) for row in csv_reader])
-            text_widget = tk.Text(load_frame, font=('Arial', 18))
-            text_widget.insert(tk.END, contents)
-            text_widget.pack(padx=20, pady=10)
-    
+    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if filePath:
+        if not filePath.endswith('.csv'):
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
+            label.pack(padx=20, pady=20)
+            home_frame.after(1500, label.pack_forget)
+            return None
+        show_load_screen()
+    return filePath
+
 
 
 def readFile(rules, transactionReader):
@@ -125,7 +127,7 @@ def categorize(rules, transaction, expenseCategories):
     # Parsing through the keys of the dictionary with the category expense amounts
     for category in rules:
         # Parsing through the keywords in the current category above
-        for  descriptor in rules[category]:
+        for descriptor in rules[category]:
             if re.search(descriptor, transactionDescriptor):
                 # Parsing through different expense categories to match it to one and increase the money
                 for i in expenseCategories:
@@ -179,15 +181,12 @@ def set_fullscreen():
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
+
     
 
 def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
-
-def displayButtonClicked():
-    fileName = validateFile(fileNameEntry.get())
-    openFile(fileName)
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
@@ -200,24 +199,15 @@ home_frame.pack(fill='both', expand=True)
 label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
 label.pack(padx=20, pady=20)
 
-file_label = tk.Label(home_frame, text="Enter transaction file name", font=('Arial', 18))
-file_label.pack(padx=20, pady=(0, 10))
-
-fileNameEntry = tk.Entry(home_frame, font=('Arial', 16))
-fileNameEntry.pack(padx=20, pady=(0, 10))
-
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=lambda: validateFile(fileNameEntry.get()))
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=openFile)
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
-label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18))
+label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
 label.pack(padx=20, pady=20)
-
-displayButton = tk.Button(load_frame, text="Display contents", font=('Arial', 24), command=displayButtonClicked)
-displayButton.pack(fill='x')
 
 back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
 back_btn.pack(pady=20)
