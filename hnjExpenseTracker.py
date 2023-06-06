@@ -175,8 +175,6 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
-def set_fullscreen():
-    win.attributes('-fullscreen', True)
 
 def show_load_screen():
     home_frame.pack_forget()
@@ -190,8 +188,6 @@ def back_to_home_screen():
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
-
-set_fullscreen()
 
 home_frame = tk.Frame(win)
 home_frame.pack(fill='both', expand=True)
