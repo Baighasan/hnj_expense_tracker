@@ -23,8 +23,8 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
-    print(categorizedExpenses)
-    return categorizedExpenses
+    # Generates the graph
+    generateGraph(categorizedExpenses)
 
 
 def loadRules():
@@ -202,5 +202,4 @@ def displayGUI():
 '''
 
 # Main Program
-categorizedExpenses = categorizeExpenses()
-generateGraph(categorizedExpenses)
+categorizeExpenses()
