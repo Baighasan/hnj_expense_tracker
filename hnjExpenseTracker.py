@@ -152,6 +152,9 @@ def generateCSVfile(categorizedExpenses):
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
+    nameFile = input("What name will your CSV be?: ")
+    file = open(nameFile+".csv", "a")
+
     pass
 
 
@@ -181,7 +184,7 @@ def generateGraph(expenseCategories):
 
 
 #######################################################
-#               Graphic User Interface                #
+#               Graphic User Interface                #   
 #######################################################
 
 
