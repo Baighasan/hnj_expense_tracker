@@ -175,12 +175,21 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #
 #######################################################
 
+def set_window_size():
+    # Calculate the desired width and height
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    desired_width = int(screen_width * 0.8)
+    desired_height = int(screen_height * 0.8)
+    
+    # Set the window's dimensions
+    x = (screen_width - desired_width) // 2
+    y = (screen_height - desired_height) // 2
+    win.geometry(f"{desired_width}x{desired_height}+{x}+{y}")
 
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
-
-    
 
 def back_to_home_screen():
     load_frame.pack_forget()
@@ -188,6 +197,8 @@ def back_to_home_screen():
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
+
+set_window_size()
 
 home_frame = tk.Frame(win)
 home_frame.pack(fill='both', expand=True)
