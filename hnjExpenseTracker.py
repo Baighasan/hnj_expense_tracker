@@ -179,8 +179,8 @@ def set_window_size():
     # Calculate the desired width and height
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    desired_width = int(screen_width * 0.8)
-    desired_height = int(screen_height * 0.8)
+    desired_width = int(screen_width * 1)
+    desired_height = int(screen_height * 1)
     
     # Set the window's dimensions
     x = (screen_width - desired_width) // 2
