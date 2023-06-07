@@ -49,16 +49,6 @@ def loadRules():
     file.close()
     return rules 
 
-'''def validateFile(fileInput):
-    fileName = str(fileInput) + ".csv"
-    if (os.path.exists(fileName) == False):
-        label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18), fg="red")
-        label.pack(padx=20, pady=20)
-        home_frame.after(750, label.pack_forget)
-        return False
-    show_load_screen() 
-    return fileName'''
-
 def openFile():
     '''
         Uses dialog box to get the file
