@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import filedialog
-from tkinter import ttk
 import thefuzz as fuzz
 import os
 import csv
@@ -181,28 +180,6 @@ def set_window_size():
     screen_height = win.winfo_screenheight()
     win.geometry(f"{screen_width}x{screen_height}")
 
-def display_contents():
-    # Create a Treeview widget
-    treeview = ttk.Treeview(load_frame)
-    treeview.pack(padx=20, pady=10)
-
-    # Insert columns
-    treeview["columns"] = ("Key", "Value")
-    treeview.column("#0", width=0, stretch=tk.NO)  # Hide the default column
-    treeview.column("Key", width=150, anchor=tk.W)
-    treeview.column("Value", width=150, anchor=tk.W)
-
-    # Insert headers
-    treeview.heading("#0", text="", anchor=tk.W)
-    treeview.heading("Key", text="Key", anchor=tk.W)
-    treeview.heading("Value", text="Value", anchor=tk.W)
-
-    categorizedExpenses = categorizeExpenses()
-    # Insert data into the treeview
-    for key, value in categorizedExpenses.items():
-        treeview.insert("", tk.END, text="", values=(key, value))
-
-
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
@@ -211,6 +188,15 @@ def show_load_screen():
 def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
+
+def display_contents():
+    categorizedExpenses = categorizeExpenses()
+
+    # Create a label for each expense category and amount
+    for category, amount in categorizedExpenses.items():
+        label_text = f"{category}: {amount}"
+        label = tk.Label(load_frame, text=label_text, font=('Arial', 18))
+        label.pack(padx=20, pady=5)
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
