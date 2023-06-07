@@ -1,5 +1,6 @@
 import tkinter as tk
-import thefuzz as fuzz
+import thefuzz.fuzz as fuzz
+from fuzzysearch import find_near_matches
 import os
 import csv
 import re
@@ -116,14 +117,17 @@ def categorize(rules, transaction, expenseCategories):
     for category in rules:
         # Parsing through the keywords in the current category above
         for descriptor in rules[category]:
-            if re.search(descriptor, transactionDescriptor):
-                # Parsing through different expense categories to match it to one and increase the money
-                for i in expenseCategories:
-                    # Finds the category to increase the amount
-                    if category == i:
-                        expenseCategories[i] += transactionAmount
-                        print(transactionDescriptor + ":" + category)       # !For debugging
-                        return expenseCategories
+            # Uses fuzzy searching to find the descriptor
+            match = find_near_matches(descriptor, transactionDescriptor, max_l_dist=3)
+            if match != []:
+                if fuzz.ratio(descriptor, match[0].matched) > 80:
+                    # Parsing through different expense categories to match it to one and increase the money
+                    for i in expenseCategories:
+                        # Finds the category to increase the amount
+                        if category == i:
+                            expenseCategories[i] += transactionAmount
+                            print(transactionDescriptor + ":" + category)       # !For debugging
+                            return expenseCategories
                 
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
