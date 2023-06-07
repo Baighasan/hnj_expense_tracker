@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 import thefuzz as fuzz
 import os
 import csv
@@ -49,7 +50,7 @@ def loadRules():
     file.close()
     return rules 
 
-def validateFile(fileInput):
+'''def validateFile(fileInput):
     fileName = str(fileInput) + ".csv"
     if (os.path.exists(fileName) == False):
         label = tk.Label(home_frame, text="Invalid file, cannot load", font=('Arial', 18), fg="red")
@@ -57,7 +58,7 @@ def validateFile(fileInput):
         home_frame.after(750, label.pack_forget)
         return False
     show_load_screen() 
-    return fileName
+    return fileName'''
 
 def openFile():
     '''
@@ -72,7 +73,6 @@ def openFile():
             return None
         show_load_screen()
     return filePath
-
 
 
 def readFile(rules, transactionReader):
@@ -179,17 +179,34 @@ def set_window_size():
     # Calculate the desired width and height
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    desired_width = int(screen_width * 1)
-    desired_height = int(screen_height * 1)
-    
-    # Set the window's dimensions
-    x = (screen_width - desired_width) // 2
-    y = (screen_height - desired_height) // 2
-    win.geometry(f"{desired_width}x{desired_height}+{x}+{y}")
+    win.geometry(f"{screen_width}x{screen_height}")
+
+def display_contents():
+    # Create a Treeview widget
+    treeview = ttk.Treeview(load_frame)
+    treeview.pack(padx=20, pady=10)
+
+    # Insert columns
+    treeview["columns"] = ("Key", "Value")
+    treeview.column("#0", width=0, stretch=tk.NO)  # Hide the default column
+    treeview.column("Key", width=150, anchor=tk.W)
+    treeview.column("Value", width=150, anchor=tk.W)
+
+    # Insert headers
+    treeview.heading("#0", text="", anchor=tk.W)
+    treeview.heading("Key", text="Key", anchor=tk.W)
+    treeview.heading("Value", text="Value", anchor=tk.W)
+
+    categorizedExpenses = categorizeExpenses()
+    # Insert data into the treeview
+    for key, value in categorizedExpenses.items():
+        treeview.insert("", tk.END, text="", values=(key, value))
+
 
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
+    display_contents()
 
 def back_to_home_screen():
     load_frame.pack_forget()
