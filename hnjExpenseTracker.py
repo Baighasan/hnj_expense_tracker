@@ -117,21 +117,25 @@ def categorize(rules, transaction, expenseCategories):
     for category in rules:
         # Parsing through the keywords in the current category above
         for descriptor in rules[category]:
-            # Uses fuzzy searching to find the descriptor
-            match = find_near_matches(descriptor, transactionDescriptor, max_l_dist=3)
+            # Uses fuzzy searching to find a potential matching descriptor in the transaction
+            match = find_near_matches(descriptor, transactionDescriptor, max_l_dist=1)
+            # If the fuzzy searching algorithm fails to find a match, it will return an empty list
             if match != []:
-                if fuzz.ratio(descriptor, match[0].matched) > 80:
-                    # Parsing through different expense categories to match it to one and increase the money
-                    for i in expenseCategories:
-                        # Finds the category to increase the amount
-                        if category == i:
-                            expenseCategories[i] += transactionAmount
-                            print(transactionDescriptor + ":" + category)       # !For debugging
-                            return expenseCategories
+                # Iterates through the objects in the match list
+                for object in match:
+                    # Checks if the fuzzy ratio between the current descriptor and the matched string in the object have a satisfactory ratio to be true 
+                    if fuzz.ratio(descriptor, object.matched) > 80:
+                        # Parsing through different expense categories to match it to one and increase the money
+                        for i in expenseCategories:
+                            # Finds the category to increase the amount
+                            if category == i:
+                                expenseCategories[i] += transactionAmount
+                                print(transactionDescriptor + ": " + category)       # !For debugging
+                                return expenseCategories
                 
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
-    print(transactionDescriptor + ":" + "Miscellaneous")        # !For debugging
+    print(transactionDescriptor + ": " + "Miscellaneous")        # !For debugging
     return expenseCategories
 
 
