@@ -168,19 +168,19 @@ def generateCSVfile(categorizedExpenses):
     pass
 
 
-def generateGraph(expenseCategories):
+def generateGraph(categorizedExpenses):
     '''
         Creates a pie chart that visualizes the distribution of expenses
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
+    
 
-    totalSpending = sum(expenseCategories.values())
+    totalSpending = sum(categorizedExpenses.values())
 
     # Calculate percentage for each category
-    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items() if amount != 0}
+    percentages = {category: (amount / totalSpending) * 100 for category, amount in categorizedExpenses.items() if amount != 0}
 
-    
     # Create lists for labels and values
     categories = list(percentages.keys())
     values = list(percentages.values())
@@ -188,13 +188,27 @@ def generateGraph(expenseCategories):
     # Define custom colors for the pie slices
     colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#ffb3b3', '#c2d6d6', '#b3ffcc']
 
-    # Create a pie chart with customizations
-    fig, ax = plt.subplots()
-    ax.pie(values, labels=categories, autopct='%1.1f%%', startangle=90, colors=colors, wedgeprops={'edgecolor': 'black'})
-    ax.set_title('Expense Distribution')
+   # Create a pie chart with customizations
+    fig, ax = plt.subplots(figsize=(14, 8), dpi=80)  # Adjust the figure size and DPI as desired
+    wedges, text_labels, autotexts = ax.pie(
+        values,
+        colors=colors,
+        startangle=90,
+        wedgeprops={'edgecolor': 'black'},
+        autopct='%1.1f%%',
+        pctdistance=0.85,  # Set the distance of the percentage labels from the center
+        labeldistance=1.05,  # Set the distance of the category labels from the center
+        textprops={'fontsize': 12}  # Set the font size of the labels
+    )
+    ax.set_title('Expense Distribution', fontsize=24)
 
-    # Add a legend
-    ax.legend(title="Categories", loc="center left", bbox_to_anchor=(1, 0.5))
+    # Create a separate legend with categories, percentages, and dollar amounts
+    legend_labels = [f'{category} (${amount:.2f}, {percentage:.1f}%)' for category, amount, percentage in zip(categories, categorizedExpenses.values(), values)]
+    ax.legend(wedges, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), prop={'size': 12})
+
+    # Remove the default labels
+    for label in text_labels:
+        label.set_visible(False)
 
     # Create a Tkinter canvas to embed the plot
     canvas = FigureCanvasTkAgg(fig, master=load_frame)
