@@ -196,20 +196,10 @@ def set_window_size():
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
-    display_contents()
 
 def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
-
-def display_contents():
-    categorizedExpenses = categorizeExpenses()
-
-    # Create a label for each expense category and amount
-    for category, amount in categorizedExpenses.items():
-        label_text = f"{category}: {amount}"
-        label = tk.Label(load_frame, text=label_text, font=('Arial', 18))
-        label.pack(padx=20, pady=5)
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
@@ -225,7 +215,7 @@ label.pack(padx=20, pady=20)
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=openFile)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=categorizeExpenses)
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
