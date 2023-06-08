@@ -1,13 +1,16 @@
 import tkinter as tk
 import thefuzz.fuzz as fuzz
 from fuzzysearch import find_near_matches
+from tkinter import filedialog
 import os
 import csv
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
-#######################################################
-#                      Functions                      #
-#######################################################
+# #######################################################
+# #                      Functions                      #
+# #######################################################
 
 def categorizeExpenses():
     '''
@@ -22,7 +25,12 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
-    print(categorizedExpenses)
+
+    # Generates the graph
+    generateGraph(categorizedExpenses)
+
+    return categorizedExpenses
+
 
 
 def loadRules():
@@ -49,21 +57,19 @@ def loadRules():
     file.close()
     return rules 
 
-
 def openFile():
     '''
-        Checks if the file exists and returns it if it does exist
+        Uses dialog box to get the file
     '''
-    fileInput = input("Name of file without .csv at the end: ")
-    fileName = fileInput + ".csv"
-    if (os.path.exists(fileName) == False):
-        print("Path does not exist")
-        return False
-    
-    # opens file and sets reader to a variable that is returned
-    file =  open(fileName, "r")
-    fileReader = csv.reader(file)
-    return file, fileReader
+    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if filePath:
+        if not filePath.endswith('.csv'):
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
+            label.pack(padx=20, pady=20)
+            home_frame.after(1500, label.pack_forget)
+            return None
+        show_load_screen()
+    return filePath
 
 
 def readFile(rules, transactionReader):
@@ -118,6 +124,7 @@ def categorize(rules, transaction, expenseCategories):
     for category in rules:
         # Parsing through the keywords in the current category above
         for descriptor in rules[category]:
+
             # Uses fuzzy searching to find a potential matching descriptor in the transaction
             match = find_near_matches(descriptor, transactionDescriptor, max_l_dist=1)
             # If the fuzzy searching algorithm fails to find a match, it will return an empty list
@@ -138,7 +145,7 @@ def categorize(rules, transaction, expenseCategories):
         expenseCategories[bestFuzz[0]] += transactionAmount
         print(transactionDescriptor + ": " + bestFuzz[0] + " (" + bestFuzz[1] + ")")
         return expenseCategories
-
+      
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
     print(transactionDescriptor + ": " + "Miscellaneous")        # !For debugging
@@ -166,35 +173,85 @@ def generateCSVfile(categorizedExpenses):
     pass
 
 
-def generateGraph(categorizedExpenses):
+def generateGraph(expenseCategories):
     '''
         Creates a pie chart that visualizes the distribution of expenses
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    pass
+
+    totalSpending = sum(expenseCategories.values())
+
+    # Calculate percentage for each category
+    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items() if amount != 0}
+
+    
+    # Create lists for labels and values
+    categories = list(percentages.keys())
+    values = list(percentages.values())
+
+    # Create a pie chart
+    plt.pie(values, labels=categories, autopct='%1.1f%%')
+    plt.title('Expense Distribution')
+
+    # Display the chart
+    plt.show()
 
 
 #######################################################
 #               Graphic User Interface                #
 #######################################################
 
+def set_window_size():
+    # Calculate the desired width and height
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    win.geometry(f"{screen_width}x{screen_height}")
 
-def displayGUI():
-    '''
-        Displays the home frame, and switches the frame based on button pressed and if validation is passed
-    '''
-    '''
-    # GUI
-    win = tk.Tk()
-    win.title("HNJ Expense Tracker")
-    win.state("zoomed")
+def show_load_screen():
+    home_frame.pack_forget()
+    load_frame.pack()
+    display_contents()
 
-    win.rowconfigure(0, weight=1)
-    win.columnconfigure(0, weight=1)
+def back_to_home_screen():
+    load_frame.pack_forget()
+    home_frame.pack()
 
-    win.mainloop()
-'''
+def display_contents():
+    categorizedExpenses = categorizeExpenses()
 
-# Main Program
-categorizeExpenses()
+    # Create a label for each expense category and amount
+    for category, amount in categorizedExpenses.items():
+        label_text = f"{category}: {amount}"
+        label = tk.Label(load_frame, text=label_text, font=('Arial', 18))
+        label.pack(padx=20, pady=5)
+
+win = tk.Tk()
+win.title("HNJ Expense Tracker")
+
+set_window_size()
+
+home_frame = tk.Frame(win)
+home_frame.pack(fill='both', expand=True)
+
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
+label.pack(padx=20, pady=20)
+
+buttonframe = tk.Frame(home_frame)
+buttonframe.pack(pady=(10, 0))
+
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=openFile)
+loadButton.pack(fill='x')
+
+load_frame = tk.Frame(win)
+label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
+label.pack(padx=20, pady=20)
+
+back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
+back_btn.pack(pady=20)
+
+# Configure weights to make the frames expand with the window
+win.rowconfigure(0, weight=1)
+win.columnconfigure(0, weight=1)
+
+win.mainloop()
