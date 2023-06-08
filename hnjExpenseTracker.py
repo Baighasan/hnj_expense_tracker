@@ -4,9 +4,8 @@ from fuzzysearch import find_near_matches
 from tkinter import filedialog
 import os
 import csv
-import re
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 # #######################################################
 # #                      Functions                      #
@@ -65,8 +64,9 @@ def openFile():
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
-    reader = csv.reader(filePath)
-    return reader
+    file = open(filePath, "r")
+    reader = csv.reader(file)
+    return file, reader
 
 
 def readFile(rules, transactionReader):
@@ -140,12 +140,10 @@ def categorize(rules, transaction, expenseCategories):
     # As long as the highest ratio is above a satisfactory number, it will continue
     if int(bestFuzz[1]) > 80:
         expenseCategories[bestFuzz[0]] += transactionAmount
-        print(transactionDescriptor + ": " + bestFuzz[0] + " (" + bestFuzz[1] + ")")
         return expenseCategories
       
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
-    print(transactionDescriptor + ": " + "Miscellaneous")        # !For debugging
     return expenseCategories
 
 
@@ -187,12 +185,30 @@ def generateGraph(expenseCategories):
     categories = list(percentages.keys())
     values = list(percentages.values())
 
-    # Create a pie chart
-    plt.pie(values, labels=categories, autopct='%1.1f%%')
-    plt.title('Expense Distribution')
+    # Define custom colors for the pie slices
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#ffb3b3', '#c2d6d6', '#b3ffcc']
 
-    # Display the chart
-    plt.show()
+    # Create a pie chart with customizations
+    fig, ax = plt.subplots()
+    ax.pie(values, labels=categories, autopct='%1.1f%%', startangle=90, colors=colors, wedgeprops={'edgecolor': 'black'})
+    ax.set_title('Expense Distribution')
+
+    # Add a legend
+    ax.legend(title="Categories", loc="center left", bbox_to_anchor=(1, 0.5))
+
+    # Create a Tkinter canvas to embed the plot
+    canvas = FigureCanvasTkAgg(fig, master=load_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    # Create a navigation toolbar for the plot
+    toolbar = NavigationToolbar2Tk(canvas, load_frame)
+    toolbar.update()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    # Display the chart and toolbar
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    toolbar.pack(side=tk.BOTTOM)
 
 
 #######################################################
@@ -213,9 +229,10 @@ def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
 
-def display_graph():
+def display_graph_and_save():
     categorizedExpenses = categorizeExpenses()
     generateGraph(categorizedExpenses)
+
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
 
@@ -230,14 +247,12 @@ label.pack(padx=20, pady=20)
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=categorizeExpenses)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_save)
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
 label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
 label.pack(padx=20, pady=20)
-
-
 
 back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
 back_btn.pack(pady=20)
