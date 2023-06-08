@@ -4,10 +4,12 @@ import thefuzz as fuzz
 import os
 import csv
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
-#######################################################
-#                      Functions                      #
-#######################################################
+# #######################################################
+# #                      Functions                      #
+# #######################################################
 
 def categorizeExpenses():
     '''
@@ -22,7 +24,12 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
+
+    # Generates the graph
+    generateGraph(categorizedExpenses)
+
     return categorizedExpenses
+
 
 
 def loadRules():
@@ -151,13 +158,29 @@ def generateCSVfile(categorizedExpenses):
     pass
 
 
-def generateGraph(categorizedExpenses):
+def generateGraph(expenseCategories):
     '''
         Creates a pie chart that visualizes the distribution of expenses
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    pass
+
+    totalSpending = sum(expenseCategories.values())
+
+    # Calculate percentage for each category
+    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items() if amount != 0}
+
+    
+    # Create lists for labels and values
+    categories = list(percentages.keys())
+    values = list(percentages.values())
+
+    # Create a pie chart
+    plt.pie(values, labels=categories, autopct='%1.1f%%')
+    plt.title('Expense Distribution')
+
+    # Display the chart
+    plt.show()
 
 
 #######################################################
