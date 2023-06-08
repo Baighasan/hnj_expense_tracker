@@ -24,10 +24,6 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
-
-    # Generates the graph
-    generateGraph(categorizedExpenses)
-
     return categorizedExpenses
 
 
@@ -68,7 +64,8 @@ def openFile():
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
-    return filePath
+    reader = csv.reader(filePath)
+    return reader
 
 
 def readFile(rules, transactionReader):
@@ -201,6 +198,9 @@ def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
 
+def display_graph():
+    categorizedExpenses = categorizeExpenses()
+    generateGraph(categorizedExpenses)
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
 
@@ -221,6 +221,8 @@ loadButton.pack(fill='x')
 load_frame = tk.Frame(win)
 label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
 label.pack(padx=20, pady=20)
+
+
 
 back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
 back_btn.pack(pady=20)
