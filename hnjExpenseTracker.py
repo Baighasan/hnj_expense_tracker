@@ -112,6 +112,7 @@ def categorize(rules, transaction, expenseCategories):
     transactionDescriptor = transaction[1].lower()
     # Stores the transaction amount
     transactionAmount = float(transaction[2])
+    bestFuzz = ["category","0"]
     
     # Parsing through the keys of the dictionary with the category expense amounts
     for category in rules:
@@ -123,16 +124,21 @@ def categorize(rules, transaction, expenseCategories):
             if match != []:
                 # Iterates through the objects in the match list
                 for object in match:
-                    # Checks if the fuzzy ratio between the current descriptor and the matched string in the object have a satisfactory ratio to be true 
-                    if fuzz.ratio(descriptor, object.matched) > 80:
-                        # Parsing through different expense categories to match it to one and increase the money
-                        for i in expenseCategories:
-                            # Finds the category to increase the amount
-                            if category == i:
-                                expenseCategories[i] += transactionAmount
-                                print(transactionDescriptor + ": " + category)       # !For debugging
-                                return expenseCategories
-                
+                    fuzzyratio = fuzz.ratio(descriptor, object.matched)
+                    if fuzzyratio >= int(bestFuzz[1]):
+                        # Sets the highest scoring category
+                        bestFuzz[0] = category
+                        # Calculates the highest ratio in a variable
+                        highestRatio = fuzzyratio
+                        # Assigns that variable to the 1st index of the bestFuzz list
+                        bestFuzz[1] = str(highestRatio)
+    
+    # As long as the highest ratio is above a satisfactory number, it will continue
+    if int(bestFuzz[1]) > 80:
+        expenseCategories[bestFuzz[0]] += transactionAmount
+        print(transactionDescriptor + ": " + bestFuzz[0] + " (" + bestFuzz[1] + ")")
+        return expenseCategories
+
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
     print(transactionDescriptor + ": " + "Miscellaneous")        # !For debugging
