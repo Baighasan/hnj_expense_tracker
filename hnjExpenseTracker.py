@@ -1,6 +1,22 @@
+# Imports necessary packages
+import subprocess
+import sys
+
+# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line
+try:
+    import thefuzz.fuzz as fuzz
+except ImportError as e:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "thefuzz"])
+    import thefuzz.fuzz as fuzz
+
+# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line
+try:
+    from fuzzysearch import find_near_matches
+except ImportError as fuzz:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "fuzzysearch"])
+    from fuzzysearch import find_near_matches
+
 import tkinter as tk
-import thefuzz.fuzz as fuzz
-from fuzzysearch import find_near_matches
 from tkinter import filedialog
 import os
 import csv
