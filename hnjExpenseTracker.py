@@ -22,6 +22,7 @@ def categorizeExpenses():
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
+    generateCSVfile(categorizedExpenses)
     
     # Generates the graph
     generateGraph(categorizedExpenses)
@@ -152,10 +153,16 @@ def generateCSVfile(categorizedExpenses):
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    nameFile = input("What name will your CSV be?: ")
-    file = open(nameFile+".csv", "a")
+    nameFile = input("What name will your CSV be?: ")   # Ask user for CSV file name
 
-    pass
+    with open(nameFile + ".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Categories", "Spending"])  # Write the header row
+        
+        for key, value in categorizedExpenses.items():
+            writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
+
+    print("CSV file generated successfully.")
 
 
 def generateGraph(expenseCategories):
