@@ -141,7 +141,7 @@ def categorize(rules, transaction, expenseCategories):
     if int(bestFuzz[1]) > 80:
         expenseCategories[bestFuzz[0]] += transactionAmount
         return expenseCategories
-      
+    
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
     return expenseCategories
@@ -188,8 +188,7 @@ def generateGraph(categorizedExpenses):
     percentages_formatted = [f'{p:.1f}%' for p in percentages]
 
     # Define custom colors for the pie slices
-    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#ffb3b3', '#c2d6d6', '#b3ffcc']
-
+    colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45']
     # Create a figure and two subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
