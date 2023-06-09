@@ -23,7 +23,6 @@ def categorizeExpenses():
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
-    generateCSVfile(categorizedExpenses)
     
     return categorizedExpenses
 
@@ -166,17 +165,14 @@ def generateCSVfile(categorizedExpenses):
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    nameFile = input("What name will your CSV be?: ")   # Ask user for CSV file name
-
-    with open(nameFile + ".csv", "w", newline="") as file:
+    with open("expenses.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Categories", "Spending"])  # Write the header row
         
         for key, value in categorizedExpenses.items():
             writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
 
-    print("CSV file generated successfully.")
-
+        return categorizedExpenses
 
 def generateGraph(categorizedExpenses):
     '''
@@ -277,10 +273,17 @@ def display_graph_and_save():
     categorizedExpenses = categorizeExpenses()
     generateGraph(categorizedExpenses)
 
+def successfulGeneration():
+    label = tk.Label(buttonframe2, text="Successfully exported data", font=('Arial', 16))
+    label.pack(padx=20, pady=20)
+
+def exportData():
+    generateCSVfile(categorizedExpenses)
+    successfulGeneration()
+
 def on_closing():
         win.quit()
         win.destroy()
-
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
@@ -306,7 +309,7 @@ label.pack(padx=20, pady=20)
 buttonframe2 = tk.Frame(load_frame)
 buttonframe2.pack()
 
-generate_csv_file_btn = tk.Button(buttonframe2, text="Generate CSV File", font=('Arial', 18), command=generateCSVfile)
+generate_csv_file_btn = tk.Button(buttonframe2, text="Generate CSV File", font=('Arial', 18), command=exportData)
 generate_csv_file_btn.pack(side=tk.LEFT)
 
 back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
