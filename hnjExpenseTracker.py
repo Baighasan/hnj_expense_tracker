@@ -267,6 +267,11 @@ def display_graph_and_save():
     categorizedExpenses = categorizeExpenses()
     generateGraph(categorizedExpenses)
 
+def on_closing():
+        win.quit()
+        win.destroy()
+
+
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
 
@@ -294,5 +299,7 @@ back_btn.pack(pady=20)
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
 win.columnconfigure(0, weight=1)
+
+win.protocol("WM_DELETE_WINDOW", on_closing)
 
 win.mainloop()
