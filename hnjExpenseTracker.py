@@ -303,8 +303,14 @@ load_frame = tk.Frame(win)
 label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
 label.pack(padx=20, pady=20)
 
-back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
-back_btn.pack(pady=20)
+buttonframe2 = tk.Frame(load_frame)
+buttonframe2.pack()
+
+generate_csv_file_btn = tk.Button(buttonframe2, text="Generate CSV File", font=('Arial', 18), command=generateCSVfile)
+generate_csv_file_btn.pack(side=tk.LEFT)
+
+back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
+back_btn.pack(side=tk.LEFT)
 
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
