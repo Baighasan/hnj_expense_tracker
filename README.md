@@ -8,7 +8,7 @@ all the results in a visual format, including a pie chart and table. All the dat
 # Packages Used
 
 - thefuzz
--             > These are used to optimize the matching algorithm. The script will install with pip if it does not exist
+-             } The script will install with pip if it does not exist
 - fuzzysearch
 - subprocess
 - sys
