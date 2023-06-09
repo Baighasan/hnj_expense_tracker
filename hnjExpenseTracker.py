@@ -4,9 +4,8 @@ from fuzzysearch import find_near_matches
 from tkinter import filedialog
 import os
 import csv
-import re
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 # #######################################################
 # #                      Functions                      #
@@ -25,10 +24,6 @@ def categorizeExpenses():
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
-
-    # Generates the graph
-    generateGraph(categorizedExpenses)
-
     return categorizedExpenses
 
 
@@ -69,7 +64,9 @@ def openFile():
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
-    return filePath
+    file = open(filePath, "r")
+    reader = csv.reader(file)
+    return file, reader
 
 
 def readFile(rules, transactionReader):
@@ -90,7 +87,7 @@ def readFile(rules, transactionReader):
                     "Medical": 0,
                     "Entertainment": 0,
                     "Miscellaneous": 0,
-                    "gains": 0
+                    "Gains": 0
                 }
     
     for transaction in transactionReader[1]:
@@ -143,12 +140,10 @@ def categorize(rules, transaction, expenseCategories):
     # As long as the highest ratio is above a satisfactory number, it will continue
     if int(bestFuzz[1]) > 80:
         expenseCategories[bestFuzz[0]] += transactionAmount
-        print(transactionDescriptor + ": " + bestFuzz[0] + " (" + bestFuzz[1] + ")")
         return expenseCategories
-      
+    
     # If the matching algorithm is not able to find a match, then the expense is set to miscellaneous
     expenseCategories["Miscellaneous"] += transactionAmount
-    print(transactionDescriptor + ": " + "Miscellaneous")        # !For debugging
     return expenseCategories
 
 
@@ -160,7 +155,7 @@ def calculateGains(transaction, expenseCategories):
         @param expenseCategories: 
     '''
     gain = float(transaction[3])
-    expenseCategories["gains"] += gain
+    expenseCategories["Gains"] += gain
     return expenseCategories
 
 
@@ -173,29 +168,81 @@ def generateCSVfile(categorizedExpenses):
     pass
 
 
-def generateGraph(expenseCategories):
+def generateGraph(categorizedExpenses):
     '''
         Creates a pie chart that visualizes the distribution of expenses
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
+    # Filter out categories with $0 spent
+    categorizedExpenses = {category: amount for category, amount in categorizedExpenses.items() if amount != 0}
 
-    totalSpending = sum(expenseCategories.values())
+    totalSpending = sum(categorizedExpenses.values())
 
-    # Calculate percentage for each category
-    percentages = {category: (amount / totalSpending) * 100 for category, amount in expenseCategories.items() if amount != 0}
-
-    
     # Create lists for labels and values
-    categories = list(percentages.keys())
-    values = list(percentages.values())
+    categories = list(categorizedExpenses.keys())
+    values = list(categorizedExpenses.values())
 
-    # Create a pie chart
-    plt.pie(values, labels=categories, autopct='%1.1f%%')
-    plt.title('Expense Distribution')
+    # Calculate Percentages
+    percentages = [(amount / totalSpending) * 100 for amount in values]
+    percentages_formatted = [f'{p:.1f}%' for p in percentages]
 
-    # Display the chart
-    plt.show()
+    # Define custom colors for the pie slices
+    colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45']
+    # Create a figure and two subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Create a pie chart on the left subplot
+    wedges, textLabels = ax1.pie(
+        values,
+        colors=colors,
+        startangle=90,
+        wedgeprops={'edgecolor': 'black'},
+        labels=None,
+        textprops={'fontsize': 12}
+    )
+    ax1.set_title('Expense Distribution')
+
+    # Create a legend on the left subplot
+    legend_labels = [f'{category} ({percentage})' for category, percentage in zip(categories, percentages_formatted)]
+    ax1.legend(wedges, legend_labels, title='Categories', loc='center left', bbox_to_anchor=(1, 0.5))
+
+
+    # Create a table on the right subplot
+    table_data = [[category, f'${amount:.2f}'] for category, amount in categorizedExpenses.items()]
+    table = ax2.table(
+        cellText=table_data,
+        colLabels=['Category', 'Amount'],
+        loc='center',
+        cellLoc='center',
+        colWidths=[0.4, 0.4],
+        cellColours=[['#eaeaea'] * 2] * len(table_data),
+        bbox=[0.4, 0, 0.6, 1]  # Adjust the bbox to position the table and increase its width
+    )
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+    table.scale(1, 1.5)
+
+    # Remove the borders from the table
+    for key, cell in table.get_celld().items():
+        cell.set_linewidth(0)
+
+    # Remove the scale from the table
+    ax2.axis('off')
+
+    # Create a Tkinter canvas to embed the plot
+    canvas = FigureCanvasTkAgg(fig, master=load_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    # Create a navigation toolbar for the plot
+    toolbar = NavigationToolbar2Tk(canvas, load_frame)
+    toolbar.update()
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+    # Display the chart and toolbar
+    canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    toolbar.pack(side=tk.BOTTOM)
 
 
 #######################################################
@@ -211,20 +258,19 @@ def set_window_size():
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
-    display_contents()
 
 def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
 
-def display_contents():
+def display_graph_and_save():
     categorizedExpenses = categorizeExpenses()
+    generateGraph(categorizedExpenses)
 
-    # Create a label for each expense category and amount
-    for category, amount in categorizedExpenses.items():
-        label_text = f"{category}: {amount}"
-        label = tk.Label(load_frame, text=label_text, font=('Arial', 18))
-        label.pack(padx=20, pady=5)
+def on_closing():
+        win.quit()
+        win.destroy()
+
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
@@ -240,7 +286,7 @@ label.pack(padx=20, pady=20)
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=openFile)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_save)
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
@@ -253,5 +299,7 @@ back_btn.pack(pady=20)
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
 win.columnconfigure(0, weight=1)
+
+win.protocol("WM_DELETE_WINDOW", on_closing)
 
 win.mainloop()
