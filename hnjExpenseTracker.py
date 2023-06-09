@@ -87,7 +87,7 @@ def readFile(rules, transactionReader):
                     "Medical": 0,
                     "Entertainment": 0,
                     "Miscellaneous": 0,
-                    "gains": 0
+                    "Gains": 0
                 }
     
     for transaction in transactionReader[1]:
@@ -155,7 +155,7 @@ def calculateGains(transaction, expenseCategories):
         @param expenseCategories: 
     '''
     gain = float(transaction[3])
-    expenseCategories["gains"] += gain
+    expenseCategories["Gains"] += gain
     return expenseCategories
 
 
@@ -174,41 +174,62 @@ def generateGraph(categorizedExpenses):
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    
+    # Filter out categories with $0 spent
+    categorizedExpenses = {category: amount for category, amount in categorizedExpenses.items() if amount != 0}
 
     totalSpending = sum(categorizedExpenses.values())
 
-    # Calculate percentage for each category
-    percentages = {category: (amount / totalSpending) * 100 for category, amount in categorizedExpenses.items() if amount != 0}
-
     # Create lists for labels and values
-    categories = list(percentages.keys())
-    values = list(percentages.values())
+    categories = list(categorizedExpenses.keys())
+    values = list(categorizedExpenses.values())
+
+    # Calculate Percentages
+    percentages = [(amount / totalSpending) * 100 for amount in values]
+    percentages_formatted = [f'{p:.1f}%' for p in percentages]
 
     # Define custom colors for the pie slices
     colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#ffb3b3', '#c2d6d6', '#b3ffcc']
 
-   # Create a pie chart with customizations
-    fig, ax = plt.subplots(figsize=(14, 8), dpi=80)  # Adjust the figure size and DPI as desired
-    wedges, text_labels, autotexts = ax.pie(
+    # Create a figure and two subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Create a pie chart on the left subplot
+    wedges, textLabels = ax1.pie(
         values,
         colors=colors,
         startangle=90,
         wedgeprops={'edgecolor': 'black'},
-        autopct='%1.1f%%',
-        pctdistance=0.85,  # Set the distance of the percentage labels from the center
-        labeldistance=1.05,  # Set the distance of the category labels from the center
-        textprops={'fontsize': 12}  # Set the font size of the labels
+        labels=None,
+        textprops={'fontsize': 12}
     )
-    ax.set_title('Expense Distribution', fontsize=24)
+    ax1.set_title('Expense Distribution')
 
-    # Create a separate legend with categories, percentages, and dollar amounts
-    legend_labels = [f'{category} (${amount:.2f}, {percentage:.1f}%)' for category, amount, percentage in zip(categories, categorizedExpenses.values(), values)]
-    ax.legend(wedges, legend_labels, loc="center left", bbox_to_anchor=(1, 0.5), prop={'size': 12})
+    # Create a legend on the left subplot
+    legend_labels = [f'{category} ({percentage})' for category, percentage in zip(categories, percentages_formatted)]
+    ax1.legend(wedges, legend_labels, title='Categories', loc='center left', bbox_to_anchor=(1, 0.5))
 
-    # Remove the default labels
-    for label in text_labels:
-        label.set_visible(False)
+
+    # Create a table on the right subplot
+    table_data = [[category, f'${amount:.2f}'] for category, amount in categorizedExpenses.items()]
+    table = ax2.table(
+        cellText=table_data,
+        colLabels=['Category', 'Amount'],
+        loc='center',
+        cellLoc='center',
+        colWidths=[0.4, 0.4],
+        cellColours=[['#eaeaea'] * 2] * len(table_data),
+        bbox=[0.4, 0, 0.6, 1]  # Adjust the bbox to position the table and increase its width
+    )
+    table.auto_set_font_size(False)
+    table.set_fontsize(12)
+    table.scale(1, 1.5)
+
+    # Remove the borders from the table
+    for key, cell in table.get_celld().items():
+        cell.set_linewidth(0)
+
+    # Remove the scale from the table
+    ax2.axis('off')
 
     # Create a Tkinter canvas to embed the plot
     canvas = FigureCanvasTkAgg(fig, master=load_frame)
