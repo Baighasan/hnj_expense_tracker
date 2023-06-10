@@ -1,5 +1,5 @@
 # Imports necessary packages
-# If packages are not installed, run "pip install -r requirements.txt"
+# If packages are not installed, run "$ pip install -r requirements.txt"
 import thefuzz.fuzz as fuzz
 from fuzzysearch import find_near_matches
 import matplotlib.pyplot as plt
