@@ -2,26 +2,32 @@
 import subprocess
 import sys
 
-# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line
+# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line using subprocess
 try:
     import thefuzz.fuzz as fuzz
 except ImportError as e:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "thefuzz"])
     import thefuzz.fuzz as fuzz
 
-# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line
+# Checks if thefuzz is installed, if it isn't then it installs it via pip through command line using subprocess
 try:
     from fuzzysearch import find_near_matches
 except ImportError as fuzz:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "fuzzysearch"])
     from fuzzysearch import find_near_matches
 
+# Checks if matplotlib is installed, if it isn't then it installs it via pip through command line
+try:
+    import matplotlib.pyplot as plt
+except ImportError as e:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "matplotlib"])
+    import matplotlib.pyplot as plt
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import tkinter as tk
 from tkinter import filedialog
 import os
 import csv
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 # #######################################################
 # #                      Functions                      #
