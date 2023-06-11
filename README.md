@@ -7,6 +7,7 @@ all the results in a visual format, including a pie chart and table. All the dat
 # Requirements
 
 Before executing the program run:
-'''
+```
 $ pip install -r requirements.txt"
-'''
+```
+This will install all the dependancies of this program so it can run
