@@ -1,11 +1,13 @@
-import tkinter as tk
+# Imports necessary packages
+# If packages are not installed, run "$ pip install -r requirements.txt"
 import thefuzz.fuzz as fuzz
 from fuzzysearch import find_near_matches
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import tkinter as tk
 from tkinter import filedialog
 import os
 import csv
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 # #######################################################
 # #                      Functions                      #
