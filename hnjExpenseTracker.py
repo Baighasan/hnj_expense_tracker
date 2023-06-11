@@ -25,7 +25,6 @@ def categorizeExpenses():
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
-    generateCSVfile(categorizedExpenses)
     
     return categorizedExpenses
 
@@ -168,17 +167,14 @@ def generateCSVfile(categorizedExpenses):
         
         @param categorizedExpenses: A list/dictionary (not decided yet) that has all the sorted expense data
     '''
-    nameFile = input("What name will your CSV be?: ")   # Ask user for CSV file name
-
-    with open(nameFile + ".csv", "w", newline="") as file:
+    with open("expenses.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["Categories", "Spending"])  # Write the header row
         
         for key, value in categorizedExpenses.items():
             writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
 
-    print("CSV file generated successfully.")
-
+        return categorizedExpenses
 
 def generateGraph(categorizedExpenses):
     '''
@@ -202,7 +198,7 @@ def generateGraph(categorizedExpenses):
     # Define custom colors for the pie slices
     colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45']
     # Create a figure and two subplots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
     # Create a pie chart on the left subplot
     wedges, textLabels = ax1.pie(
@@ -261,6 +257,7 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #   
 #######################################################
 
+
 def set_window_size():
     # Calculate the desired width and height
     screen_width = win.winfo_screenwidth()
@@ -274,15 +271,18 @@ def show_load_screen():
 def back_to_home_screen():
     load_frame.pack_forget()
     home_frame.pack()
+    # Remove the graph canvas and toolbar
+    for widget in load_frame.winfo_children():
+        widget.pack_forget()
 
-def display_graph_and_save():
+def display_graph_and_export_data():
     categorizedExpenses = categorizeExpenses()
     generateGraph(categorizedExpenses)
+    generateCSVfile(categorizedExpenses)
 
 def on_closing():
-        win.quit()
-        win.destroy()
-
+    win.quit()
+    win.destroy()
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
@@ -298,15 +298,21 @@ label.pack(padx=20, pady=20)
 buttonframe = tk.Frame(home_frame)
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_save)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data)
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
-label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 18)) 
-label.pack(padx=20, pady=20)
+label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24)) 
+label.pack(padx=20, pady=10)
 
-back_btn = tk.Button(load_frame, text="Back", font=('Arial', 18), command=back_to_home_screen)
-back_btn.pack(pady=20)
+label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20)) 
+label.pack(padx=20, pady=10)
+
+buttonframe2 = tk.Frame(load_frame)
+buttonframe2.pack()
+
+back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
+back_btn.pack(side=tk.LEFT)
 
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
