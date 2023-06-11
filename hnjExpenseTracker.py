@@ -265,9 +265,25 @@ def set_window_size():
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
+    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24)) 
+    label.pack(padx=20, pady=10)
+
+    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20)) 
+    label.pack(padx=20, pady=10)
+
+    buttonframe2.pack()
+
+    # Remove any existing back button
+    for widget in buttonframe2.winfo_children():
+        widget.destroy()
+    
+    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
+    back_btn.pack(side=tk.LEFT)
+
 
 def back_to_home_screen():
     load_frame.pack_forget()
+    buttonframe2.pack_forget()
     home_frame.pack()
     # Remove the graph canvas and toolbar
     for widget in load_frame.winfo_children():
@@ -300,17 +316,8 @@ loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial',
 loadButton.pack(fill='x')
 
 load_frame = tk.Frame(win)
-label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24)) 
-label.pack(padx=20, pady=10)
-
-label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20)) 
-label.pack(padx=20, pady=10)
 
 buttonframe2 = tk.Frame(load_frame)
-buttonframe2.pack()
-
-back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
-back_btn.pack(side=tk.LEFT)
 
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
