@@ -39,6 +39,31 @@ def categorizeExpenses():
     return categorizedExpenses
 
 
+def openFile():
+    '''
+        Uses dialog box to get the file
+        
+        @return None: Returns this if the user does not select anything
+        @return file, reader: File is the file reader, reader is the csv reader
+    '''
+    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if filePath:
+        if not filePath.endswith('.csv'):
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
+            label.pack(padx=20, pady=20)
+            home_frame.after(1500, label.pack_forget)
+            return None
+        show_load_screen()
+    # Try and except is used to catch error if the user does not input any file in the dialogue box
+    try:
+        file = open(filePath, "r")
+    except FileNotFoundError:
+        return None
+    
+    reader = csv.reader(file)
+    return file, reader
+
+
 def loadRules():
     '''
         Loads the rules from rules.csv into a dictionary for usage
@@ -68,31 +93,6 @@ def loadRules():
 
     file.close()
     return rules
-
-
-def openFile():
-    '''
-        Uses dialog box to get the file
-        
-        @return None: Returns this if the user does not select anything
-        @return file, reader: File is the file reader, reader is the csv reader
-    '''
-    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-    if filePath:
-        if not filePath.endswith('.csv'):
-            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
-            label.pack(padx=20, pady=20)
-            home_frame.after(1500, label.pack_forget)
-            return None
-        show_load_screen()
-    # Try and except is used to catch error if the user does not input any file in the dialogue box
-    try:
-        file = open(filePath, "r")
-    except FileNotFoundError:
-        return None
-    
-    reader = csv.reader(file)
-    return file, reader
 
 
 def readFile(rules, transactionReader):
@@ -126,6 +126,7 @@ def readFile(rules, transactionReader):
         # Otherwise, it will run the catagorizing algorithm and match the descriptor
         expenseCategories = categorize(rules, transaction, expenseCategories)
     
+    transactionReader[0].close()
     return expenseCategories
 
 
@@ -202,6 +203,7 @@ def generateCSVfile(categorizedExpenses):
         writer.writerow(["Categories", "Spending"])  # Write the header row
         
         for key, value in categorizedExpenses.items():
+            value = round(value, 2)
             writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
 
 
