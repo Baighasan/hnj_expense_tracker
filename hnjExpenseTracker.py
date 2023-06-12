@@ -93,6 +93,32 @@ def loadRules():
     file.close()
     return rules
 
+def openFile():
+    '''
+        Uses dialog box to get the file
+        @return file: file that has transactions
+        @return reader: reader to read through the transactions
+    '''
+    # Dialog box for selecting file
+    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if filePath:
+        # Checks if file is a csv and returns None if it isn't
+        if not filePath.endswith('.csv'):
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
+            label.pack(padx=20, pady=20)
+            home_frame.after(1500, label.pack_forget)
+            return None
+        show_load_screen()
+    # If user closes dialog box then return None
+    try:
+        file = open(filePath, "r")
+    except FileNotFoundError:
+        return None
+    
+    # Open reader
+    reader = csv.reader(file)
+    return file, reader
+
 
 def readFile(rules, transactionReader):
     '''
@@ -122,7 +148,7 @@ def readFile(rules, transactionReader):
         if transaction[2] == "":
             expenseCategories = calculateGains(transaction, expenseCategories)
             continue
-        # Otherwise, it will run the catagorizing algorithm and match the descriptor
+        # Otherwise, it will run the categorizing algorithm and match the descriptor
         expenseCategories = categorize(rules, transaction, expenseCategories)
     
     transactionReader[0].close()
@@ -131,7 +157,7 @@ def readFile(rules, transactionReader):
 
 def categorize(rules, transaction, expenseCategories):
     '''
-        Reads through the transaction csv file and uses a catagorizing algorithm that takes one transaction, and attempts to match a keyword substring to the transaction
+        Reads through the transaction csv file and uses a categorizing algorithm that takes one transaction, and attempts to match a keyword substring to the transaction
         descriptor substring
         
         @param rules: a dictionary that holds the rules/mapping keywords that was loaded from rules.csv
@@ -179,7 +205,7 @@ def categorize(rules, transaction, expenseCategories):
 
 def calculateGains(transaction, expenseCategories):
     '''
-        Adds the value in the third index of the transaction to the gains key in the expenseCatagories dictionary
+        Adds the value in the third index of the transaction to the gains key in the expenseCategories dictionary
         
         @param transaction: the current transaction we are adding to the dictionary
         @param expenseCategories: the dictionary holding all the categorized expenses
@@ -288,71 +314,100 @@ def generateGraph(categorizedExpenses):
 #######################################################
 
 def set_window_size():
-    # Calculate the desired width and height
+    '''
+        Sets window to size of user's window for better view
+    '''
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    win_width = screen_width // 3
-    win_height = screen_height // 3
+    win_width = screen_width 
+    win_height = screen_height 
     win.geometry(f"{win_width}x{win_height}")
 
 def show_load_screen():
+    '''
+        Shows the screen after loading the transaction csv file
+    '''
+    # Forgets first frame
     home_frame.pack_forget()
-    load_frame.pack()   
-    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='white')
+    # Packs load frame
+    load_frame.pack()
+    # Adds messages
+    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='peach puff')
     label.pack(padx=20, pady=10)
 
     label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20), bg='royal blue', fg='white')
     label.pack(padx=20, pady=10)
 
+    # Packs frame for button
     buttonframe2.pack()
 
     # Remove any existing back button
     for widget in buttonframe2.winfo_children():
         widget.destroy()
     
-    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='black')
+    # Button to go back to home frame
+    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='peach puff')
     back_btn.pack(side=tk.LEFT)
 
 
 def back_to_home_screen():
+    '''
+        Returns user back to home screen
+    '''
+    # Forgets load frame
     load_frame.pack_forget()
+    # Forgets button frame to prevent multiple back buttons
     buttonframe2.pack_forget()
+    # Pack home frame again
     home_frame.pack()
     # Remove the graph canvas and toolbar
     for widget in load_frame.winfo_children():
         widget.pack_forget()
 
 def display_graph_and_export_data():
+    '''
+        Display the graph and exports the data to a csv file
+    '''
+    # Sets categorizedExpenses to value returned by categorizeExpenses()
     categorizedExpenses = categorizeExpenses()
-    # If none is returned that means that the user cancelled the operation, so we skip the next functions
     if categorizedExpenses != None:
         show_load_screen()
         generateGraph(categorizedExpenses)
         generateCSVfile(categorizedExpenses)
 
 def on_closing():
+    # To prevent memory leaks, when the user closes the window, we quit the program
     win.quit()
     win.destroy()
 
+# Initializes tkinter window
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
-win.configure(bg='navy blue')
+win.configure(bg='royal blue')
 
+# Sets window size according to user's dimensions
 set_window_size()
 
+# Sets home frame
 home_frame = tk.Frame(win, bg='royal blue')
 home_frame.pack(fill='both', expand=True)
 
-label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='white')
+# Welcome Message
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='peach puff')
 label.pack(padx=20, pady=20)
 
+# Sets button frame for load button
 buttonframe = tk.Frame(home_frame, bg='royal blue')
 buttonframe.pack(pady=(10, 0))
 
+# Button to load transaction file
 loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data, bg='light blue', fg='navy blue')
 loadButton.pack(fill='x')
 
+# Sets load frame for after selecting file
 load_frame = tk.Frame(win, bg='royal blue')
+
+# Sets button frame for back button
 
 buttonframe2 = tk.Frame(load_frame, bg='royal blue')
 
@@ -360,6 +415,8 @@ buttonframe2 = tk.Frame(load_frame, bg='royal blue')
 win.rowconfigure(0, weight=1)
 win.columnconfigure(0, weight=1)
 
+# When user closes window, this stops the program
 win.protocol("WM_DELETE_WINDOW", on_closing)
 
+# Runs the program
 win.mainloop()
