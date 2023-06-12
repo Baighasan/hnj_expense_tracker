@@ -49,11 +49,10 @@ def openFile():
     filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
     if filePath:
         if not filePath.endswith('.csv'):
-            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file containing your transactions.", font=('Arial', 18), fg="red")
             label.pack(padx=20, pady=20)
-            home_frame.after(1500, label.pack_forget)
+            home_frame.after(4000, label.pack_forget)
             return None
-        show_load_screen()
     # Try and except is used to catch error if the user does not input any file in the dialogue box
     try:
         file = open(filePath, "r")
@@ -75,9 +74,9 @@ def loadRules():
     try:
         file = open(rulesFile, "r")
     except FileNotFoundError:
-        label = tk.Label(home_frame, text="Rules.csv does not exist. Visit the hnj_expense_tracker github repository to redownload it.", font=('Arial', 18), fg="red")
+        label = tk.Label(home_frame, text="FATAL: cannot find rules.csv. Visit the hnj_expense_tracker GitHub repository to redownload it.", font=('Arial', 18), fg="red")
         label.pack(padx=20, pady=20)
-        home_frame.after(1500, label.pack_forget)
+        home_frame.after(6000, label.pack_forget)
         return None
         
     rulesReader = csv.reader(file)
@@ -327,6 +326,7 @@ def display_graph_and_export_data():
     categorizedExpenses = categorizeExpenses()
     # If none is returned that means that the user cancelled the operation, so we skip the next functions
     if categorizedExpenses != None:
+        show_load_screen()
         generateGraph(categorizedExpenses)
         generateCSVfile(categorizedExpenses)
 
