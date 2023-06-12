@@ -15,14 +15,18 @@ from matplotlib.figure import Figure
 def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and categorizes the expenses
+        
+        @return categorizedExpenses: The dictionary containing the amount spent in each expense category
     '''
-    # Loads the rules from rules.csv
-    rules = loadRules()
     
     # Opens the reader for the transactions
     reader = openFile()
+    # If the reader returns none, that means the user selected nothing, which means that we should not 
     if reader == None:
         return None
+    
+    # Loads the rules from rules.csv
+    rules = loadRules()
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
@@ -34,6 +38,8 @@ def categorizeExpenses():
 def loadRules():
     '''
         Loads the rules from rules.csv into a dictionary for usage
+        
+        @return rules: A dictionary containing everything in rules.csv, used for the matching algorithm
     '''
     rulesFile = "rules.csv"
     if (os.path.exists(rulesFile) == False):
@@ -58,6 +64,9 @@ def loadRules():
 def openFile():
     '''
         Uses dialog box to get the file
+        
+        @return None: Returns this if the user does not select anything
+        @return file, reader: File is the file reader, reader is the csv reader
     '''
     filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
     if filePath:
@@ -67,6 +76,7 @@ def openFile():
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
+    # Try and except is used to catch error if the user does not input any file in the dialogue box
     try:
         file = open(filePath, "r")
     except FileNotFoundError:
@@ -82,6 +92,8 @@ def readFile(rules, transactionReader):
         
         @param reader: csv file reader used to parse through the transactions
         @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
+        
+        @return expenseCategories: The dictionary containing every transaction amount sorted into a expense category
     '''
     # Creates a dictionary for categories
     expenseCategories = {
@@ -116,6 +128,8 @@ def categorize(rules, transaction, expenseCategories):
         @param rules: a dictionary that holds the rules/mapping keywords that was loaded from rules.csv
         @param transaction: the current row in the csv file that we are categorizing
         @param expenseCategories: a dictionary with the key being the categories, and the value being the amount spent in that expense category
+
+        @return expenseCategories: Everytime the function runs, it returns the dictionary with the updated numbers after it just sorted the transaction
     '''
     
     # Made lowercase so that we can map to rules.csv
@@ -159,7 +173,9 @@ def calculateGains(transaction, expenseCategories):
         Adds the value in the third index of the transaction to the gains key in the expenseCatagories dictionary
         
         @param transaction: the current transaction we are adding to the dictionary
-        @param expenseCategories: 
+        @param expenseCategories: the dictionary holding all the categorized expenses
+        
+        @return expenseCategories: returns the categorized expenses with the correct gains
     '''
     gain = float(transaction[3])
     expenseCategories["Gains"] += gain
@@ -179,7 +195,6 @@ def generateCSVfile(categorizedExpenses):
         for key, value in categorizedExpenses.items():
             writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
 
-        return categorizedExpenses
 
 def generateGraph(categorizedExpenses):
     '''
@@ -299,6 +314,7 @@ def back_to_home_screen():
 
 def display_graph_and_export_data():
     categorizedExpenses = categorizeExpenses()
+    # If none is returned that means that the user cancelled the operation, so we skip the next functions
     if categorizedExpenses != None:
         generateGraph(categorizedExpenses)
         generateCSVfile(categorizedExpenses)
