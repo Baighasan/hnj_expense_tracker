@@ -20,6 +20,8 @@ def categorizeExpenses():
     
     # Opens the reader for the transactions
     reader = openFile()
+    if reader == None:
+        return None
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
@@ -64,7 +66,11 @@ def openFile():
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
-    file = open(filePath, "r")
+    try:
+        file = open(filePath, "r")
+    except FileNotFoundError:
+        return None
+    
     reader = csv.reader(file)
     return file, reader
 
@@ -291,8 +297,9 @@ def back_to_home_screen():
 
 def display_graph_and_export_data():
     categorizedExpenses = categorizeExpenses()
-    generateGraph(categorizedExpenses)
-    generateCSVfile(categorizedExpenses)
+    if categorizedExpenses != None:
+        generateGraph(categorizedExpenses)
+        generateCSVfile(categorizedExpenses)
 
 def on_closing():
     win.quit()
