@@ -6,6 +6,7 @@ import os
 import csv
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
 
 # #######################################################
 # #                      Functions                      #
@@ -255,20 +256,21 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #   
 #######################################################
 
-
 def set_window_size():
     # Calculate the desired width and height
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    win.geometry(f"{screen_width}x{screen_height}")
+    win_width = screen_width // 3
+    win_height = screen_height // 3
+    win.geometry(f"{win_width}x{win_height}")
 
 def show_load_screen():
     home_frame.pack_forget()
     load_frame.pack()
-    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24)) 
+    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='peach puff')
     label.pack(padx=20, pady=10)
 
-    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20)) 
+    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20), bg='royal blue', fg='peach puff')
     label.pack(padx=20, pady=10)
 
     buttonframe2.pack()
@@ -277,7 +279,7 @@ def show_load_screen():
     for widget in buttonframe2.winfo_children():
         widget.destroy()
     
-    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
+    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='peach puff')
     back_btn.pack(side=tk.LEFT)
 
 
@@ -300,24 +302,25 @@ def on_closing():
 
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
+win.configure(bg='navy blue')
 
 set_window_size()
 
-home_frame = tk.Frame(win)
+home_frame = tk.Frame(win, bg='royal blue')
 home_frame.pack(fill='both', expand=True)
 
-label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='peach puff')
 label.pack(padx=20, pady=20)
 
-buttonframe = tk.Frame(home_frame)
+buttonframe = tk.Frame(home_frame, bg='royal blue')
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data)
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data, bg='light blue', fg='navy blue')
 loadButton.pack(fill='x')
 
-load_frame = tk.Frame(win)
+load_frame = tk.Frame(win, bg='royal blue')
 
-buttonframe2 = tk.Frame(load_frame)
+buttonframe2 = tk.Frame(load_frame, bg='royal blue')
 
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
