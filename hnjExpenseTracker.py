@@ -287,11 +287,11 @@ def set_window_size():
 
 def show_load_screen():
     home_frame.pack_forget()
-    load_frame.pack()
-    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='peach puff')
+    load_frame.pack()   
+    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='white')
     label.pack(padx=20, pady=10)
 
-    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20), bg='royal blue', fg='peach puff')
+    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20), bg='royal blue', fg='white')
     label.pack(padx=20, pady=10)
 
     buttonframe2.pack()
@@ -300,7 +300,7 @@ def show_load_screen():
     for widget in buttonframe2.winfo_children():
         widget.destroy()
     
-    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='peach puff')
+    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='black')
     back_btn.pack(side=tk.LEFT)
 
 
@@ -332,7 +332,7 @@ set_window_size()
 home_frame = tk.Frame(win, bg='royal blue')
 home_frame.pack(fill='both', expand=True)
 
-label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='peach puff')
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='white')
 label.pack(padx=20, pady=20)
 
 buttonframe = tk.Frame(home_frame, bg='royal blue')
