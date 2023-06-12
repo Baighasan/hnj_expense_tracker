@@ -25,18 +25,18 @@ def categorizeExpenses():
     
     # Opens the reader for the transactions
     reader = openFile()
-    # If the reader returns none, that means the user selected nothing, which means that we should not 
-    if reader == None:
-        return None
     
     # Loads the rules from rules.csv
     rules = loadRules()
+    
+    # If the reader or rules returns none, that means the user selected nothing or rules.csv was deleted, which means that we should not continue
+    if (reader == None) or (rules == None):
+        return None
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
     
     return categorizedExpenses
-
 
 
 def loadRules():
@@ -46,13 +46,17 @@ def loadRules():
         @return rules: A dictionary containing everything in rules.csv, used for the matching algorithm
     '''
     rulesFile = "rules.csv"
-    if (os.path.exists(rulesFile) == False):
-        print("Path does not exist")
-        return False
-    
-    rules = {}
-    file = open("rules.csv", "r")
+
+    try:
+        file = open(rulesFile, "r")
+    except FileNotFoundError:
+        label = tk.Label(home_frame, text="Rules.csv does not exist. Visit the hnj_expense_tracker github repository to redownload it.", font=('Arial', 18), fg="red")
+        label.pack(padx=20, pady=20)
+        home_frame.after(1500, label.pack_forget)
+        return None
+        
     rulesReader = csv.reader(file)
+    rules = {}
     
     # Row of keywords
     for row in rulesReader:
@@ -63,7 +67,8 @@ def loadRules():
             rules[row[0]].append(row[i])
 
     file.close()
-    return rules 
+    return rules
+
 
 def openFile():
     '''
