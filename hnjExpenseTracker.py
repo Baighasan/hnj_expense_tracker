@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import tkinter as tk
 from tkinter import filedialog
-import os
 import csv
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -108,7 +107,6 @@ def openFile():
             label.pack(padx=20, pady=20)
             home_frame.after(1500, label.pack_forget)
             return None
-        show_load_screen()
     # If user closes dialog box then return None
     try:
         file = open(filePath, "r")
