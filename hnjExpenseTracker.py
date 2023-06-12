@@ -8,6 +8,9 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import csv
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
 
 # #######################################################
 # #                      Functions                      #
@@ -16,12 +19,19 @@ import csv
 def categorizeExpenses():
     '''
         Calls all the functions that opens the csv file and categorizes the expenses
+        
+        @return categorizedExpenses: The dictionary containing the amount spent in each expense category
     '''
-    # Loads the rules from rules.csv
-    rules = loadRules()
     
     # Opens the reader for the transactions
     reader = openFile()
+    
+    # Loads the rules from rules.csv
+    rules = loadRules()
+    
+    # If the reader or rules returns none, that means the user selected nothing or rules.csv was deleted, which means that we should not continue
+    if (reader == None) or (rules == None):
+        return None
     
     # Reads the file and calls another function to categorize each transaction
     categorizedExpenses = readFile(rules, reader)
@@ -29,19 +39,48 @@ def categorizeExpenses():
     return categorizedExpenses
 
 
+def openFile():
+    '''
+        Uses dialog box to get the file
+        
+        @return None: Returns this if the user does not select anything
+        @return file, reader: File is the file reader, reader is the csv reader
+    '''
+    filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
+    if filePath:
+        if not filePath.endswith('.csv'):
+            label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file containing your transactions.", font=('Arial', 18), fg="red")
+            label.pack(padx=20, pady=20)
+            home_frame.after(4000, label.pack_forget)
+            return None
+    # Try and except is used to catch error if the user does not input any file in the dialogue box
+    try:
+        file = open(filePath, "r")
+    except FileNotFoundError:
+        return None
+    
+    reader = csv.reader(file)
+    return file, reader
+
 
 def loadRules():
     '''
         Loads the rules from rules.csv into a dictionary for usage
+        
+        @return rules: A dictionary containing everything in rules.csv, used for the matching algorithm
     '''
     rulesFile = "rules.csv"
-    if (os.path.exists(rulesFile) == False):
-        print("Path does not exist")
-        return False
-    
-    rules = {}
-    file = open("rules.csv", "r")
+
+    try:
+        file = open(rulesFile, "r")
+    except FileNotFoundError:
+        label = tk.Label(home_frame, text="FATAL: cannot find rules.csv. Visit the hnj_expense_tracker GitHub repository to redownload it.", font=('Arial', 18), fg="red")
+        label.pack(padx=20, pady=20)
+        home_frame.after(6000, label.pack_forget)
+        return None
+        
     rulesReader = csv.reader(file)
+    rules = {}
     
     # Row of keywords
     for row in rulesReader:
@@ -52,21 +91,31 @@ def loadRules():
             rules[row[0]].append(row[i])
 
     file.close()
-    return rules 
+    return rules
 
 def openFile():
     '''
         Uses dialog box to get the file
+        @return file: file that has transactions
+        @return reader: reader to read through the transactions
     '''
+    # Dialog box for selecting file
     filePath = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
     if filePath:
+        # Checks if file is a csv and returns None if it isn't
         if not filePath.endswith('.csv'):
             label = tk.Label(home_frame, text="Invalid file format. Please select a CSV file.", font=('Arial', 18), fg="red")
             label.pack(padx=20, pady=20)
             home_frame.after(1500, label.pack_forget)
             return None
         show_load_screen()
-    file = open(filePath, "r")
+    # If user closes dialog box then return None
+    try:
+        file = open(filePath, "r")
+    except FileNotFoundError:
+        return None
+    
+    # Open reader
     reader = csv.reader(file)
     return file, reader
 
@@ -77,6 +126,8 @@ def readFile(rules, transactionReader):
         
         @param reader: csv file reader used to parse through the transactions
         @param transactionReader: Index 0 is the file reader, Index 1 is the csv file reader
+        
+        @return expenseCategories: The dictionary containing every transaction amount sorted into a expense category
     '''
     # Creates a dictionary for categories
     expenseCategories = {
@@ -97,20 +148,23 @@ def readFile(rules, transactionReader):
         if transaction[2] == "":
             expenseCategories = calculateGains(transaction, expenseCategories)
             continue
-        # Otherwise, it will run the catagorizing algorithm and match the descriptor
+        # Otherwise, it will run the categorizing algorithm and match the descriptor
         expenseCategories = categorize(rules, transaction, expenseCategories)
     
+    transactionReader[0].close()
     return expenseCategories
 
 
 def categorize(rules, transaction, expenseCategories):
     '''
-        Reads through the transaction csv file and uses a catagorizing algorithm that takes one transaction, and attempts to match a keyword substring to the transaction
+        Reads through the transaction csv file and uses a categorizing algorithm that takes one transaction, and attempts to match a keyword substring to the transaction
         descriptor substring
         
         @param rules: a dictionary that holds the rules/mapping keywords that was loaded from rules.csv
         @param transaction: the current row in the csv file that we are categorizing
         @param expenseCategories: a dictionary with the key being the categories, and the value being the amount spent in that expense category
+
+        @return expenseCategories: Everytime the function runs, it returns the dictionary with the updated numbers after it just sorted the transaction
     '''
     
     # Made lowercase so that we can map to rules.csv
@@ -151,10 +205,12 @@ def categorize(rules, transaction, expenseCategories):
 
 def calculateGains(transaction, expenseCategories):
     '''
-        Adds the value in the third index of the transaction to the gains key in the expenseCatagories dictionary
+        Adds the value in the third index of the transaction to the gains key in the expenseCategories dictionary
         
         @param transaction: the current transaction we are adding to the dictionary
-        @param expenseCategories: 
+        @param expenseCategories: the dictionary holding all the categorized expenses
+        
+        @return expenseCategories: returns the categorized expenses with the correct gains
     '''
     gain = float(transaction[3])
     expenseCategories["Gains"] += gain
@@ -172,9 +228,9 @@ def generateCSVfile(categorizedExpenses):
         writer.writerow(["Categories", "Spending"])  # Write the header row
         
         for key, value in categorizedExpenses.items():
+            value = round(value, 2)
             writer.writerow([key, "$" + str(value)])  # Write each key-value pair as a row with a "$" sign before the value
 
-        return categorizedExpenses
 
 def generateGraph(categorizedExpenses):
     '''
@@ -257,67 +313,110 @@ def generateGraph(categorizedExpenses):
 #               Graphic User Interface                #   
 #######################################################
 
-
 def set_window_size():
-    # Calculate the desired width and height
+    '''
+        Sets window to size of user's window for better view
+    '''
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    win.geometry(f"{screen_width}x{screen_height}")
+    win_width = screen_width 
+    win_height = screen_height 
+    win.geometry(f"{win_width}x{win_height}")
 
 def show_load_screen():
+    '''
+        Shows the screen after loading the transaction csv file
+    '''
+    # Forgets first frame
     home_frame.pack_forget()
+    # Packs load frame
     load_frame.pack()
+    # Adds messages
+    label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24), bg='royal blue', fg='peach puff')
+    label.pack(padx=20, pady=10)
+
+    label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20), bg='royal blue', fg='white')
+    label.pack(padx=20, pady=10)
+
+    # Packs frame for button
+    buttonframe2.pack()
+
+    # Remove any existing back button
+    for widget in buttonframe2.winfo_children():
+        widget.destroy()
+    
+    # Button to go back to home frame
+    back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen, bg='royal blue', fg='peach puff')
+    back_btn.pack(side=tk.LEFT)
+
 
 def back_to_home_screen():
+    '''
+        Returns user back to home screen
+    '''
+    # Forgets load frame
     load_frame.pack_forget()
+    # Forgets button frame to prevent multiple back buttons
+    buttonframe2.pack_forget()
+    # Pack home frame again
     home_frame.pack()
     # Remove the graph canvas and toolbar
     for widget in load_frame.winfo_children():
         widget.pack_forget()
 
 def display_graph_and_export_data():
+    '''
+        Display the graph and exports the data to a csv file
+    '''
+    # Sets categorizedExpenses to value returned by categorizeExpenses()
     categorizedExpenses = categorizeExpenses()
-    generateGraph(categorizedExpenses)
-    generateCSVfile(categorizedExpenses)
+    if categorizedExpenses != None:
+        show_load_screen()
+        generateGraph(categorizedExpenses)
+        generateCSVfile(categorizedExpenses)
 
 def on_closing():
+    # To prevent memory leaks, when the user closes the window, we quit the program
     win.quit()
     win.destroy()
 
+# Initializes tkinter window
 win = tk.Tk()
 win.title("HNJ Expense Tracker")
+win.configure(bg='royal blue')
 
+# Sets window size according to user's dimensions
 set_window_size()
 
-home_frame = tk.Frame(win)
+# Sets home frame
+home_frame = tk.Frame(win, bg='royal blue')
 home_frame.pack(fill='both', expand=True)
 
-label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18))
+# Welcome Message
+label = tk.Label(home_frame, text="Welcome to the HNJ Expense Tracker!", font=('Arial', 18), bg='royal blue', fg='peach puff')
 label.pack(padx=20, pady=20)
 
-buttonframe = tk.Frame(home_frame)
+# Sets button frame for load button
+buttonframe = tk.Frame(home_frame, bg='royal blue')
 buttonframe.pack(pady=(10, 0))
 
-loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data)
+# Button to load transaction file
+loadButton = tk.Button(buttonframe, text="Load Transaction File", font=('Arial', 24), command=display_graph_and_export_data, bg='light blue', fg='navy blue')
 loadButton.pack(fill='x')
 
-load_frame = tk.Frame(win)
-label = tk.Label(load_frame, text="Loaded successfully!", font=('Arial', 24)) 
-label.pack(padx=20, pady=10)
+# Sets load frame for after selecting file
+load_frame = tk.Frame(win, bg='royal blue')
 
-label = tk.Label(load_frame, text="View results in exported csv file (expenses.csv)", font=('Arial', 20)) 
-label.pack(padx=20, pady=10)
+# Sets button frame for back button
 
-buttonframe2 = tk.Frame(load_frame)
-buttonframe2.pack()
-
-back_btn = tk.Button(buttonframe2, text="Back", font=('Arial', 18), command=back_to_home_screen)
-back_btn.pack(side=tk.LEFT)
+buttonframe2 = tk.Frame(load_frame, bg='royal blue')
 
 # Configure weights to make the frames expand with the window
 win.rowconfigure(0, weight=1)
 win.columnconfigure(0, weight=1)
 
+# When user closes window, this stops the program
 win.protocol("WM_DELETE_WINDOW", on_closing)
 
+# Runs the program
 win.mainloop()
